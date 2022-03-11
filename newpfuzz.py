@@ -9,14 +9,8 @@ import random
 import argparse
 import colorama
 import requests
-import asyncio
-import json
-import aiohttp
 import threading
-import concurrent
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from time import time
-import ast
+import concurrent.futures
 
 import urllib3
 urllib3.disable_warnings()
@@ -66,7 +60,7 @@ def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_
 	now = datetime.now()
 	dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 	try:
-		site_request = requests.get(url, headers=headers, verify=ssl_verify)
+		site_request = reqpost.get(url, headers=headers, verify=ssl_verify)
 		
 		FOUND.append([dt_string, url, site_request.status_code, len(site_request.content)])
 		print(url+" ==> "+site_request.status_code, flush=True)
@@ -84,43 +78,29 @@ def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_
 	sys.stdout.write(fulldesc)
 	sys.stdout.flush()
 
-def _fetch_post(url, ssl_verify=False, write_response=False,stream=True, timeout=DEF_TIMEOUT):
+def _fetch_post(data,url, headers, ssl_verify=False, write_response=False, timeout=DEF_TIMEOUT):
 	global FOUND
-	#domain = url.split("//")[-1].split("/")[0].split('?')[0].split(':')[0]
+	domain = url.split("//")[-1].split("/")[0].split('?')[0].split(':')[0]
 	socket.setdefaulttimeout = timeout
 	now = datetime.now()
 	dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 	try:
-		print(url)
-		site_request = requests.post(url,data={'Token': '326729'})
-		#site_request = await session.post(url,data={'y':'value'}, headers=headers, verify=False)
+		site_request = requests.post(url,data={'y':'value'}, headers=headers, verify=False)
 		#site_request =requests.api.request('post', url, data={'bar':'baz'}, json=None, verify=False)
-		fulldesc= str(url+" ==> \n"+site_request.body+" = "+site_request.status_code)
-		return fulldesc
-		sys.stdout.write('ss')
-		print('hii')
-		""" FOUND.append([dt_string, url, site_request.status_code, len(site_request.content)])
-			if write_response:
-				file_name_string = "".join(x for x in url if x.isalnum())
-				f = open(os.path.join(domain,file_name_string), 'wb')
-				f.write(site_request.content)
-				f.close()
-				print(url+" ==> \n"+site_request.body+" = "+site_request.status_code, flush=True)	 """	
+		fulldesc=str(url+" ==> \n"+site_request.body+" = "+site_request.status_code)
+		sys.stdout.write(fulldesc)
+		FOUND.append([dt_string, url, site_request.status_code, len(site_request.content)])
+		if write_response:
+			file_name_string = "".join(x for x in url if x.isalnum())
+			f = open(os.path.join(domain,file_name_string), 'wb')
+			f.write(site_request.content)
+			f.close()
+			print(url+" ==> \n"+site_request.body+" = "+site_request.status_code, flush=True)		
 	except Exception as e:
 		FOUND.append([dt_string, url, "Error: %s" % e, 0])
-	
+	fulldesc=str(url+" ==> \n"+site_request.body+" = "+site_request.status_code)
 	sys.stdout.write('jiii')
-
-def download_file(url,datas, ssl_verify=False, write_response=False,stream=True):
-	try:
-		html = requests.post(url,stream=True,data=datas)
-		print(html.request.body)
-		return html.content
-	except Exception as e:
-		print(e)
-		return 'error'
-	
-	
+	sys.stdout.flush()
 	
 
 def parse_arguemnts():
@@ -230,52 +210,26 @@ def main():
 	#urls="https://%s" % (args.domain, port)
 	print(args.domain)
 	
-	
-	print("hii")
-	for port in ports:
-		for dir in dirs:
-			url=args.domain.replace("fuzz", dir)
-			URLs_to_check.append(url)
-	if "fuzz" in args.data:
-		
-		processes = []
-		thread_args = []
+	if "fuzz" in str(args.domain):
+		print("hii")
+		for port in ports:
+			for dir in dirs:
+				url=args.domain.replace("fuzz", dir)
+				URLs_to_check.append(url)
+	elif "fuzz" in args.data:
 		print("POSt")
 		for port in ports:
 			for dir in dirs:
 				data=args.data.replace("fuzz", dir)
-				DATA_to_check.append(ast.literal_eval(data))
-				
-				
-				print(ast.literal_eval(str(data)))
+				DATA_to_check.append(data)
 				_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
 				_print_info("Execution starting with %s threads..." % args.threads)
-		processes = []
-		processes = []
-		
-		tokens = {'Token': '326729'}
-		print(type(DATA_to_check[0]))
-		#for i in DATA_to_check:
-		#	print(i)
-		#NEW_DATA_CHECK= DATA_to_check.items()
-		with ThreadPoolExecutor(max_workers=200) as executor:
-			for i in DATA_to_check:
-				print(i)
-				processes.append(executor.submit(download_file, url,i))
 
-		for task in as_completed(processes):
-			print(task.result())
-		exit()
-	exit()
 	thread_args = []
-	processes = []
-	for i in DATA_to_check:
+	for i in URLs_to_check:
 		thread_args.append((i, args.domain,headers,args.ignorecertificate,args.writeresponse, args.timeout))
 	with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
-		#executor.map(_fetch_post, *zip(*thread_args))
-		processes.append(executor.submit(_fetch_post, *zip(*thread_args)))
-	for task in as_completed(processes):
-		print(task.result())
+		executor.map(_fetch_post, *zip(*thread_args))
 				#if args.ssl:
 					
 					#URLs_to_check.append("https://%s:%s/%s" % (args.domain, port, dir))
