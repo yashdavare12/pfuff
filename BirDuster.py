@@ -62,7 +62,7 @@ def _print_info(message):
 def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	global FOUND
 	domain = url.split("//")[-1].split("/")[0].split('?')[0].split(':')[0]
-	print(url)
+	
 	socket.setdefaulttimeout = timeout
 	now = datetime.now()
 	dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
@@ -127,6 +127,7 @@ def parse_arguemnts():
 	parser.add_argument("-o", "--output", help="Output file to write to")
 	parser.add_argument("-l", "--dlist", help="Directory list file")
 	parser.add_argument("-d", "--data", help="POST data")
+	parser.add_argument("-X", "--X", help="POST requests,Put requests")
 	parser.add_argument("-w", "--writeresponse", help="Write response to file", action="store_true", default=False)
 	parser.add_argument("-i", "--ignorecertificate", help="Ignore certificate errors", action="store_true", default=False)
 	parser.add_argument("-u", "--useragent", help="User agent to use.", default=generate_user_agent())
@@ -193,7 +194,7 @@ def main():
 	# Parse ports file.
 	if args.pfile:
 		ports = []
-		ports_raw = open(args.pfile, 'r').readlines()
+		ports_raw = open(args.pfile, 'r', encoding='latin-1').readlines()
 		for port in ports_raw:
 			try:
 				dis = port.strip()
@@ -252,74 +253,50 @@ def main():
 		for dir in dirs:
 			url=args.domain.replace("fuzz", dir)
 			URLs_to_check.append(url)
-	if "fuzz" in args.data:
-		
+	print(args.X)
+	if args.X == "POST":
+		if "fuzz" in args.data:
+			
+			processes = []
+			thread_args = []
+			print("POSt")
+			for port in ports:
+				for dir in dirs:
+					data=args.data.replace("fuzz", dir)
+					DATA_to_check.append(ast.literal_eval(data))
+					print(ast.literal_eval(str(data)))
+					_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
+					_print_info("Execution starting with %s threads..." % args.threads)
+			processes = []
+			processes = []
+			
+			tokens = {'Token': '326729'}
+			print(type(DATA_to_check[0]))
+			#for i in DATA_to_check:
+			#	print(i)
+			#NEW_DATA_CHECK= DATA_to_check.items()
+			with ThreadPoolExecutor(max_workers=200) as executor:
+				for i in DATA_to_check:
+					processes.append(executor.submit(download_file, url,i))
+
+			for task in as_completed(processes):
+				try:
+					print(task.result().status_code)
+				#print('s')
+				except:
+					pass
+			exit()
+	else:
 		processes = []
+		_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
+		_print_info("Execution starting with %s threads..." % args.threads)
+
 		thread_args = []
-		print("POSt")
-		for port in ports:
-			for dir in dirs:
-				data=args.data.replace("fuzz", dir)
-				DATA_to_check.append(ast.literal_eval(data))
-				
-				
-				print(ast.literal_eval(str(data)))
-				_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
-				_print_info("Execution starting with %s threads..." % args.threads)
-		processes = []
-		processes = []
-		
-		tokens = {'Token': '326729'}
-		print(type(DATA_to_check[0]))
-		#for i in DATA_to_check:
-		#	print(i)
-		#NEW_DATA_CHECK= DATA_to_check.items()
-		with ThreadPoolExecutor(max_workers=200) as executor:
-			for i in DATA_to_check:
-				processes.append(executor.submit(download_file, url,i))
+		for i in URLs_to_check:
+			thread_args.append((i,headers,args.ignorecertificate,args.writeresponse, args.timeout))
 
-		for task in as_completed(processes):
-			try:
-				print(task.result().status_code)
-			#print('s')
-			except:
-				pass
-		exit()
-	exit()
-	thread_args = []
-	processes = []
-	for i in DATA_to_check:
-		thread_args.append((i, args.domain,headers,args.ignorecertificate,args.writeresponse, args.timeout))
-	with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
-		#executor.map(_fetch_post, *zip(*thread_args))
-		processes.append(executor.submit(_fetch_post, *zip(*thread_args)))
-	for task in as_completed(processes):
-		print("new")
-		#print(task.result())
-				#if args.ssl:
-					
-					#URLs_to_check.append("https://%s:%s/%s" % (args.domain, port, dir))
-				#else:
-				#	URLs_to_check.append("http://%s:%s/%s" % (args.domain, port, dir))
-	exit()
-	#creating get url
-	""" for port in ports:
-		for dir in dirs:
-			if args.ssl:
-				URLs_to_check.append("https://%s:%s/%s" % (args.domain, port, dir))
-			else:
-				URLs_to_check.append("http://%s:%s/%s" % (args.domain, port, dir)) """
-	
-
-	_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
-	_print_info("Execution starting with %s threads..." % args.threads)
-
-	thread_args = []
-	for i in URLs_to_check:
-		thread_args.append((i,headers,args.ignorecertificate,args.writeresponse, args.timeout))
-
-	with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
-		executor.map(_fetch_url, *zip(*thread_args))
+		with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
+			executor.map(_fetch_url, *zip(*thread_args))
 
 	_print_succ("Completed exection on %s items." % len(URLs_to_check))
 
