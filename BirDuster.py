@@ -10,6 +10,7 @@ import argparse
 import colorama
 import requests
 import asyncio
+import re
 import json
 import aiohttp
 import threading
@@ -111,14 +112,7 @@ def _fetch_post(url, ssl_verify=False, write_response=False,stream=True, timeout
 	
 	sys.stdout.write('jiii')
 
-def download_file(url,datas, ssl_verify=False, write_response=False,stream=True):
-	try:
-		html = requests.post(url,stream=True,data=datas)
-		print(html.request.body)
-		return html.content
-	except Exception as e:
-		print(e)
-		return 'error'
+
 	
 	
 	
@@ -136,6 +130,7 @@ def parse_arguemnts():
 	parser.add_argument("-w", "--writeresponse", help="Write response to file", action="store_true", default=False)
 	parser.add_argument("-i", "--ignorecertificate", help="Ignore certificate errors", action="store_true", default=False)
 	parser.add_argument("-u", "--useragent", help="User agent to use.", default=generate_user_agent())
+	parser.add_argument("-mr","--matchs", help="regex match")
 	parser.add_argument("--ssl", help="Should i use SSL?", action="store_true")
 	parser.add_argument('--timeout', help="Socket timeout [3]", default=3, type=int)
 	args = parser.parse_args()
@@ -168,6 +163,27 @@ def parse_arguemnts():
 		else:
 			_print_info("Original file will be overwritten.")
 	return args
+
+def download_file(url,datas, ssl_verify=False, write_response=False,stream=True):
+	args = parse_arguemnts()
+	try:
+		html = requests.post(url,stream=True,data=datas)
+		#print(html.request.url)
+		#print(html.request.headers)
+		#print(html.request.body)
+		#print(html.status_code)
+		#pattern.fullmatch("admin") 
+		if(args.matchs):
+			pattern = re.compile(args.matchs)
+			match = re.search(pattern, str(html.content))
+			if match:
+				print("gotin")
+				return html
+		else:
+			return html
+	except Exception as e:
+		print(e)
+		return 'error'
 
 def main():
 	_print_banner()
@@ -260,11 +276,14 @@ def main():
 		#NEW_DATA_CHECK= DATA_to_check.items()
 		with ThreadPoolExecutor(max_workers=200) as executor:
 			for i in DATA_to_check:
-				print(i)
 				processes.append(executor.submit(download_file, url,i))
 
 		for task in as_completed(processes):
-			print(task.result())
+			try:
+				print(task.result().status_code)
+			#print('s')
+			except:
+				pass
 		exit()
 	exit()
 	thread_args = []
@@ -275,7 +294,8 @@ def main():
 		#executor.map(_fetch_post, *zip(*thread_args))
 		processes.append(executor.submit(_fetch_post, *zip(*thread_args)))
 	for task in as_completed(processes):
-		print(task.result())
+		print("new")
+		#print(task.result())
 				#if args.ssl:
 					
 					#URLs_to_check.append("https://%s:%s/%s" % (args.domain, port, dir))
