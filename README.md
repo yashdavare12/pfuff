@@ -23,9 +23,7 @@ flag):
 * `-o`/`--output`: Output CSV of responses. Default is `domain_output.csv`.
 * `-l`/`--dlist`: Directory list file. Default is `dir_list.txt`.
 * `-w`/`--writereponse`: Will write HTTP/S responses to files. Default is False.
-* `-i`/`--ignorecertificate`: Ignore SSL certificate errors. Default is False.
 * `-u`/`--useragent`: User-Agent to use. Default is random user-agent.
-* `--ssl`: Use SSL or not. `-i` flag will automatically turn on SSL.
 * `--timeout`: Change default socket timeout. Default is 3 seconds.
 
 ```bash
