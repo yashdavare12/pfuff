@@ -70,13 +70,13 @@ def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_
 		site_request = requests.get(url, headers=headers, verify=ssl_verify)
 		
 		FOUND.append([dt_string, url, site_request.status_code, len(site_request.content)])
-		print(url+" ==> "+site_request.status_code, flush=True)
+		#print(url+" ==> "+site_request.status_code, flush=True)
 		if write_response:
 			file_name_string = "".join(x for x in url if x.isalnum())
 			f = open(os.path.join(domain,file_name_string), 'wb')
 			f.write(site_request.content)
 			f.close()
-			print(url+" ==> "+site_request.status_code, flush=True)
+			#print(url+" ==> "+site_request.status_code, flush=True)
 			
 	except Exception as e:
 		FOUND.append([dt_string, url, "Error: %s" % e, 0])
@@ -171,7 +171,7 @@ def download_file(url,datas, ssl_verify=False, write_response=False,stream=True)
 		html = requests.post(url,stream=True,data=datas)
 		#print(html.request.url)
 		#print(html.request.headers)
-		#print(html.request.body)
+		print(html.request.body)
 		#print(html.status_code)
 		#pattern.fullmatch("admin") 
 		if(args.matchs):
@@ -217,9 +217,10 @@ def main():
 	# Parse Directory file
 	dirs = []
 	if args.dlist:
-		dirs_raw = open(args.dlist, 'r').readlines()
+		dirs_raw = open(args.dlist, 'r', encoding='latin-1').readlines()
 		for i in dirs_raw:
 			thisDir = i.strip()
+			print(thisDir)
 			if len(thisDir) == 0:
 				continue
 			dirs.append(thisDir)
@@ -275,7 +276,7 @@ def main():
 			#for i in DATA_to_check:
 			#	print(i)
 			#NEW_DATA_CHECK= DATA_to_check.items()
-			with ThreadPoolExecutor(max_workers=200) as executor:
+			with ThreadPoolExecutor(max_workers=args.threads) as executor:
 				for i in DATA_to_check:
 					processes.append(executor.submit(download_file, url,i))
 
@@ -292,6 +293,7 @@ def main():
 		_print_info("Execution starting with %s threads..." % args.threads)
 
 		thread_args = []
+		
 		for i in URLs_to_check:
 			thread_args.append((i,headers,args.ignorecertificate,args.writeresponse, args.timeout))
 
