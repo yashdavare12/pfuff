@@ -1,25 +1,14 @@
-# BirDuster
+# pfuff
 
 ## About
-`BirDuster` is a Python based knockoff of the original DirBuster.
+`pfuff` is a Python based knockoff of the original DirBuster.
 
-`BirDuster` is a multi threaded Python application designed to brute force directories
+`pfuff` is a multi threaded Python application designed to brute force directories
  and files names on web/application servers. Often is the case now of what looks
  like a web server in a state of default installation is actually not,
  and has pages and applications hidden within.
 
-## Installation
 
-Use PIP:
-`pip3 install --user BirDuster`
-
-Clone source:
-```bash
-git clone https://www.github.com/ytisf/BirDuster
-cd BirDuster
-pip3 install --user -r requirements.txt
-python3 BirDuster.py --help
-```
 
 ## Usage
 
