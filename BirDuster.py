@@ -5,6 +5,8 @@ import csv
 import sys
 import base64
 import socket
+import pycurl
+from urllib.parse import urlencode
 import random
 import argparse
 import colorama
@@ -12,6 +14,7 @@ import requests
 import asyncio
 import re
 import json
+from requests.sessions import Session
 import aiohttp
 import threading
 import concurrent
@@ -26,6 +29,7 @@ from builtins import input # compatibility, python2/3
 from datetime import datetime
 from colorama import Fore, Style
 from user_agent import generate_user_agent, generate_navigator
+from threading import Thread,local
 
 
 # Default configurations
@@ -34,6 +38,7 @@ DEF_TIMEOUT = 3
 DEFAULT_DIR_LIST_FILE = 'dir_list.txt'
 #sys.stdout.write(DEFAULT_DIR_LIST_FILE)
 FOUND = []
+thread_local = local()
 
 
 def _print_banner():
@@ -59,6 +64,11 @@ def _print_succ(message):
 def _print_info(message):
 	sys.stdout.write(Fore.BLUE + "[+]" + Style.RESET_ALL + "\t%s\n" % message)
 
+def get_session() -> Session:
+    if not hasattr(thread_local,'session'):
+        thread_local.session = requests.Session()
+    return thread_local.session
+
 def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	global FOUND
 	domain = url.split("//")[-1].split("/")[0].split('?')[0].split(':')[0]
@@ -70,13 +80,13 @@ def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_
 		site_request = requests.get(url, headers=headers, verify=ssl_verify)
 		
 		FOUND.append([dt_string, url, site_request.status_code, len(site_request.content)])
-		print(url+" ==> "+site_request.status_code, flush=True)
+		#print(url+" ==> "+site_request.status_code, flush=True)
 		if write_response:
 			file_name_string = "".join(x for x in url if x.isalnum())
 			f = open(os.path.join(domain,file_name_string), 'wb')
 			f.write(site_request.content)
 			f.close()
-			print(url+" ==> "+site_request.status_code, flush=True)
+			#print(url+" ==> "+site_request.status_code, flush=True)
 			
 	except Exception as e:
 		FOUND.append([dt_string, url, "Error: %s" % e, 0])
@@ -93,6 +103,7 @@ def _fetch_post(url, ssl_verify=False, write_response=False,stream=True, timeout
 	dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 	try:
 		print(url)
+		
 		site_request = requests.post(url,data={'Token': '326729'})
 		#site_request = await session.post(url,data={'y':'value'}, headers=headers, verify=False)
 		#site_request =requests.api.request('post', url, data={'bar':'baz'}, json=None, verify=False)
@@ -165,23 +176,20 @@ def parse_arguemnts():
 			_print_info("Original file will be overwritten.")
 	return args
 
-def download_file(url,datas, ssl_verify=False, write_response=False,stream=True):
+def download_file(datas, ssl_verify=False, write_response=False,stream=True):
 	args = parse_arguemnts()
 	try:
-		html = requests.post(url,stream=True,data=datas)
-		#print(html.request.url)
-		#print(html.request.headers)
-		#print(html.request.body)
-		#print(html.status_code)
-		#pattern.fullmatch("admin") 
-		if(args.matchs):
-			pattern = re.compile(args.matchs)
-			match = re.search(pattern, str(html.content))
+		session = get_session()
+		with session.post('http://192.168.43.38/mutillidae/index.php?page=login.php', data=datas) as response:
+			print(f'Read {len(response.content)} and {datas}')
+        	#pattern.fullmatch("admin") 
+			pattern = re.compile('Deliberately')
+			match = re.search(pattern, str(response.text))
 			if match:
 				print("gotin")
-				return html
-		else:
-			return html
+
+		
+		return 1
 	except Exception as e:
 		print(e)
 		return 'error'
@@ -217,9 +225,10 @@ def main():
 	# Parse Directory file
 	dirs = []
 	if args.dlist:
-		dirs_raw = open(args.dlist, 'r').readlines()
+		dirs_raw = open(args.dlist, 'r', encoding='latin-1').readlines()
 		for i in dirs_raw:
 			thisDir = i.strip()
+			print(thisDir)
 			if len(thisDir) == 0:
 				continue
 			dirs.append(thisDir)
@@ -271,13 +280,13 @@ def main():
 			processes = []
 			
 			tokens = {'Token': '326729'}
-			print(type(DATA_to_check[0]))
+			print((DATA_to_check[0]))
 			#for i in DATA_to_check:
 			#	print(i)
 			#NEW_DATA_CHECK= DATA_to_check.items()
-			with ThreadPoolExecutor(max_workers=200) as executor:
+			with ThreadPoolExecutor(max_workers=args.threads) as executor:
 				for i in DATA_to_check:
-					processes.append(executor.submit(download_file, url,i))
+					processes.append(executor.submit(download_file, i))
 
 			for task in as_completed(processes):
 				try:
@@ -292,6 +301,7 @@ def main():
 		_print_info("Execution starting with %s threads..." % args.threads)
 
 		thread_args = []
+		
 		for i in URLs_to_check:
 			thread_args.append((i,headers,args.ignorecertificate,args.writeresponse, args.timeout))
 
@@ -320,3 +330,7 @@ if __name__ == "__main__":
 	except KeyboardInterrupt:
 		_print_err("Got keyboard interrupt. Byebye now.")
 		exit()
+
+
+# python .\BirDuster.py -l .\dir_list2.txt -X POST http://192.168.43.38/mutillidae/index.php?page=login.php -d "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}"
+#
