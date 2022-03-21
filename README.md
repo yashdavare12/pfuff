@@ -16,7 +16,6 @@
 flag):
 
 * `-h`/`--help`: Show help and exit.
-* `-v`,`-vv`,`-vvv`/`--verbosity`: Verbosity level.
 * `-p`/`--port`: Port to use while dirbusting. Default 80/443.
 * `-P`/`--pfile`: If you want to test several ports just write them to a file with newlines.
 * `-t`/`--threads`: Amount of concurrent threads. Default is 15.
