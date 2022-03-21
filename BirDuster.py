@@ -188,11 +188,13 @@ def parse_arguemnts():
 			_print_info("Original file will be overwritten.")
 	return args
 
+
 def download_file(url,datas, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	args = parse_arguemnts()
 	try:
 		session = get_session()
 		with session.post(url, data=datas) as response:
+
 			try:
 				if args.matchs:
 					pattern = re.compile(args.matchs)
@@ -203,6 +205,7 @@ def download_file(url,datas, ssl_verify=True, write_response=False, timeout=DEF_
 			except:
 				pass
 			
+
 
 		
 		return 1
@@ -298,6 +301,7 @@ def main():
 			#	print(i)
 			#NEW_DATA_CHECK= DATA_to_check.items()
 
+
 			for i in DATA_to_check:
 				thread_args.append((args.domain,i,args.ignorecertificate,args.writeresponse, args.timeout))
 
@@ -349,4 +353,4 @@ if __name__ == "__main__":
 
 
 # python .\BirDuster.py -l .\dir_list2.txt -X POST http://192.168.43.38/mutillidae/index.php?page=login.php -d "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}"
-#
+
