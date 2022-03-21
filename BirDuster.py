@@ -176,11 +176,13 @@ def parse_arguemnts():
 			_print_info("Original file will be overwritten.")
 	return args
 
-def download_file(datas, ssl_verify=False, write_response=False,stream=True):
+
+def download_file(url,datas, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	args = parse_arguemnts()
 	try:
 		session = get_session()
-		with session.post('http://192.168.43.38/mutillidae/index.php?page=login.php', data=datas) as response:
+		with session.post(url, data=datas) as response:
+
 			print(f'Read {len(response.content)} and {datas}')
         	#pattern.fullmatch("admin") 
 			pattern = re.compile('Deliberately')
@@ -265,9 +267,6 @@ def main():
 	print(args.X)
 	if args.X == "POST":
 		if "fuzz" in args.data:
-			
-			processes = []
-			thread_args = []
 			print("POSt")
 			for port in ports:
 				for dir in dirs:
@@ -277,16 +276,20 @@ def main():
 					_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
 					_print_info("Execution starting with %s threads..." % args.threads)
 			processes = []
-			processes = []
+			thread_args = []
 			
 			tokens = {'Token': '326729'}
 			print((DATA_to_check[0]))
 			#for i in DATA_to_check:
 			#	print(i)
 			#NEW_DATA_CHECK= DATA_to_check.items()
-			with ThreadPoolExecutor(max_workers=args.threads) as executor:
-				for i in DATA_to_check:
-					processes.append(executor.submit(download_file, i))
+
+
+			for i in DATA_to_check:
+				thread_args.append((args.domain,i,args.ignorecertificate,args.writeresponse, args.timeout))
+
+			with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
+				executor.map(download_file, *zip(*thread_args))
 
 			for task in as_completed(processes):
 				try:
@@ -333,4 +336,4 @@ if __name__ == "__main__":
 
 
 # python .\BirDuster.py -l .\dir_list2.txt -X POST http://192.168.43.38/mutillidae/index.php?page=login.php -d "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}"
-#
+
