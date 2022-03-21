@@ -12,7 +12,7 @@
 
 ## Usage
 
-`BirDuster` has the following flags and options (which you can see with the `-h`
+`pfuff` has the following flags and options (which you can see with the `-h`
 flag):
 
 * `-h`/`--help`: Show help and exit.
