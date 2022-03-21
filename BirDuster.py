@@ -71,6 +71,7 @@ def get_session() -> Session:
 
 def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	global FOUND
+	args = parse_arguemnts()
 	domain = url.split("//")[-1].split("/")[0].split('?')[0].split(':')[0]
 	
 	socket.setdefaulttimeout = timeout
@@ -80,6 +81,15 @@ def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_
 		site_request = requests.get(url, headers=headers, verify=ssl_verify)
 		
 		FOUND.append([dt_string, url, site_request.status_code, len(site_request.content)])
+		try:
+				if args.matchs:
+					pattern = re.compile(args.matchs)
+					match = re.search(pattern, str(site_request.text))
+					print(f'Read {len(site_request.content)} and {url}')
+					if match:
+						print("gotin")
+		except:
+			pass
 		#print(url+" ==> "+site_request.status_code, flush=True)
 		if write_response:
 			file_name_string = "".join(x for x in url if x.isalnum())
@@ -143,6 +153,8 @@ def parse_arguemnts():
 	parser.add_argument("-i", "--ignorecertificate", help="Ignore certificate errors", action="store_true", default=False)
 	parser.add_argument("-u", "--useragent", help="User agent to use.", default=generate_user_agent())
 	parser.add_argument("-mr","--matchs", help="regex match")
+	parser.add_argument("-ms","--matchstatus", help="match status and allow only that ones")
+	parser.add_argument("-fs","--filterstatus", help="filter status and allow only that ones")
 	parser.add_argument("--ssl", help="Should i use SSL?", action="store_true")
 	parser.add_argument('--timeout', help="Socket timeout [3]", default=3, type=int)
 	args = parser.parse_args()
@@ -183,12 +195,17 @@ def download_file(url,datas, ssl_verify=True, write_response=False, timeout=DEF_
 		session = get_session()
 		with session.post(url, data=datas) as response:
 
-			print(f'Read {len(response.content)} and {datas}')
-        	#pattern.fullmatch("admin") 
-			pattern = re.compile('Deliberately')
-			match = re.search(pattern, str(response.text))
-			if match:
-				print("gotin")
+			try:
+				if args.matchs:
+					pattern = re.compile(args.matchs)
+					match = re.search(pattern, str(response.text))
+					print(f'Read {len(response.content)} and {datas}')
+					if match:
+						print("gotin")
+			except:
+				pass
+			
+
 
 		
 		return 1
