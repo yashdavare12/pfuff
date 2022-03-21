@@ -38,6 +38,7 @@ positional arguments:
   domain                domain or host to buster
 ```
 ```bash
+Example:
 GET request:
      python .\BirDuster.py -l .\dir_list2.txt -t 10 http://192.168.43.38/mutillidae/index.php?page=fuzz -mr "logged"        
 POST request:
