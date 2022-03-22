@@ -188,6 +188,12 @@ def parse_arguemnts():
 			_print_info("Original file will be overwritten.")
 	return args
 
+def regexprint(argsmatch,response,datas):
+	pattern = re.compile(argsmatch)
+	match = re.search(pattern, str(response.text))
+	print(f'Read {len(response.content)} and {datas}')
+	if match:
+			print("gotiiiiin")
 
 def download_file(url,datas, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	args = parse_arguemnts()
@@ -199,59 +205,45 @@ def download_file(url,datas, ssl_verify=True, write_response=False, timeout=DEF_
 		with session.post(url, data=datas) as response:
 			try:
 				if args.matchs and (args.matchstatus or args.filterstatus):
-					print('flag1 set')
+					#print('flag1 set')
 					flag1=True
 			except:
 				if args.matchstatus and args.filterstatus:
-					print('flag2 set')
+					#print('flag2 set')
 					flag2=True
 			try:
 				if args.matchstatus and flag1==False and flag2==False:
-					print('flag3 set')
+					#print('flag3 set')
 					flag3=True
 			except:
 				pass
 			try:
 				if args.filterstatus and flag1==False and flag2==False:
-					print('flag3 set')
+					#print('flag3 set')
 					flag3=True
 			except:
 				pass
 			#print(args.filterstatus + str(flag1) +str(flag2))
 			if flag1:					#all three present
-				print('status is ' + str(args.filterstatus) +'and '+str(response.status_code) )
 				#if int(args.filterstatus)==int(response.status_code): print('hiii')
+				flagin1=False
+				flagin2=False
 				try:
 					if int(response.status_code)!=int(args.filterstatus) and int(response.status_code)==int(args.matchstatus):
-						print('mrall')
-						pattern = re.compile(args.matchs)
-						match = re.search(pattern, str(response.text))
-						print(f'Read {len(response.content)} and {datas}')
-						if match:
-							if int(args.filterstatus)==int(response.status_code): print('hiii')
-							print("gotiiiiin")
+						regexprint(args.matchs,response,datas)
+						flagin1=True
+						
 				except:
 					pass
 				try:
-					if int(response.status_code)!=int(args.filterstatus):
-						print('mrfc')
-						pattern = re.compile(args.matchs)
-						match = re.search(pattern, str(response.text))
-						print(f'Read {len(response.content)} and {datas}')
-						if match:
-							if int(args.filterstatus)==int(response.status_code): print('hiii')
-							print("gotiiiiin")
+					if int(response.status_code)!=int(args.filterstatus) and flagin1==False:
+						regexprint(args.matchs,response,datas)
+						flagin2=True
 				except:
 					pass
 				try:
-					if int(response.status_code)==int(args.matchstatus):
-						print('mrmc')
-						pattern = re.compile(args.matchs)
-						match = re.search(pattern, str(response.text))
-						print(f'Read {len(response.content)} and {datas}')
-						if match:
-							if int(args.filterstatus)==int(response.status_code): print('hiii')
-							print("gotiiiiin")
+					if int(response.status_code)==int(args.matchstatus) and flagin1==False and flagin2==False:
+						regexprint(args.matchs,response,datas)
 				except:
 					pass
 			if flag2:
@@ -265,21 +257,12 @@ def download_file(url,datas, ssl_verify=True, write_response=False, timeout=DEF_
 					if int(response.status_code)==int(args.matchstatus):
 						print(f'Read {len(response.content)} and {datas}')
 			try:
-				print( str(flag1) +str(flag2) +str(flag3))
+				#print( str(flag1) +str(flag2) +str(flag3))
 				if flag1==False and flag2==False and flag3==False:
 					if args.matchs:
-						pattern = re.compile(args.matchs)
-						match = re.search(pattern, str(response.text))
-						print(f'Read {len(response.content)} and {datas}')
-						if match:
-							print("goteeen")
-						
+						regexprint(args.matchs,response,datas)
 			except:
 				pass
-			
-
-
-		
 		return 1
 	except Exception as e:
 		print(e)
