@@ -71,6 +71,9 @@ def get_session() -> Session:
 
 def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	global FOUND
+	flag1=False
+	flag2=False
+	flag3=False
 	args = parse_arguemnts()
 	domain = url.split("//")[-1].split("/")[0].split('?')[0].split(':')[0]
 	
@@ -79,23 +82,72 @@ def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_
 	dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 	try:
 		site_request = requests.get(url, headers=headers, verify=ssl_verify)
-		
+		#print(site_request.content)
 		FOUND.append([dt_string, url, site_request.status_code, len(site_request.content)])
 		try:
-				if args.matchs:
-					pattern = re.compile(args.matchs)
-					match = re.search(pattern, str(site_request.text))
-					print(f'Read {len(site_request.content)} and {url}')
-					if match:
-						print("gotin")
+			if args.matchs and (args.matchstatus or args.filterstatus):
+					#print('flag1 set')
+				flag1=True
 		except:
-			pass
+			if args.matchstatus and args.filterstatus:
+					#print('flag2 set')
+				flag2=True
+		try:
+			if args.matchstatus and flag1==False and flag2==False:
+					#print('flag3 set')
+					flag3=True
+		except:
+				pass
+		try:
+				if args.filterstatus and flag1==False and flag2==False:
+					#print('flag3 set')
+					flag3=True
+		except:
+				pass
+		if flag1:         #all three present
+        #if int(args.filterstatus)==int(site_request.status_code): print('hiii')
+			flagin1=False
+			flagin2=False
+			try:
+				if int(site_request.status_code)!=int(args.filterstatus) and int(site_request.status_code)==int(args.matchstatus):
+					regexprint(args.matchs,site_request,url)
+					flagin1=True
+				
+			except:
+				pass
+			try:
+				if int(site_request.status_code)!=int(args.filterstatus) and flagin1==False:
+					regexprint(args.matchs,site_request,url)
+					flagin2=True
+			except:
+				pass
+			try:
+				if int(site_request.status_code)==int(args.matchstatus) and flagin1==False and flagin2==False:
+					regexprint(args.matchs,site_request,url)
+			except:
+				pass
+		if flag2:
+				if int(site_request.status_code)!=int(args.filterstatus) and int(site_request.status_code)==int(args.matchstatus):
+					print(f'Read {len(site_request.content)} and {url}')
+		if flag3:
+				try:
+					if int(site_request.status_code)!=int(args.filterstatus):
+						print(f'Read {len(site_request.content)} and {url}')
+				except:
+					if int(site_request.status_code)==int(args.matchstatus):
+						print(f'Read {len(site_request.content)} and {url}')
+		try:
+				#print( str(flag1) +str(flag2) +str(flag3))
+			if flag1==False and flag2==False and flag3==False:
+					if args.matchs:
+						regexprint(args.matchs,site_request,url)
+		except:
+				pass
+		return 1
+
+		
 		#print(url+" ==> "+site_request.status_code, flush=True)
-		if write_response:
-			file_name_string = "".join(x for x in url if x.isalnum())
-			f = open(os.path.join(domain,file_name_string), 'wb')
-			f.write(site_request.content)
-			f.close()
+		
 			#print(url+" ==> "+site_request.status_code, flush=True)
 			
 	except Exception as e:
