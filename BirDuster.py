@@ -191,17 +191,89 @@ def parse_arguemnts():
 
 def download_file(url,datas, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	args = parse_arguemnts()
+	flag1=False
+	flag2=False
+	flag3=False
 	try:
 		session = get_session()
 		with session.post(url, data=datas) as response:
-
 			try:
-				if args.matchs:
-					pattern = re.compile(args.matchs)
-					match = re.search(pattern, str(response.text))
+				if args.matchs and (args.matchstatus or args.filterstatus):
+					print('flag1 set')
+					flag1=True
+			except:
+				if args.matchstatus and args.filterstatus:
+					print('flag2 set')
+					flag2=True
+			try:
+				if args.matchstatus and flag1==False and flag2==False:
+					print('flag3 set')
+					flag3=True
+			except:
+				pass
+			try:
+				if args.filterstatus and flag1==False and flag2==False:
+					print('flag3 set')
+					flag3=True
+			except:
+				pass
+			#print(args.filterstatus + str(flag1) +str(flag2))
+			if flag1:					#all three present
+				print('status is ' + str(args.filterstatus) +'and '+str(response.status_code) )
+				#if int(args.filterstatus)==int(response.status_code): print('hiii')
+				try:
+					if int(response.status_code)!=int(args.filterstatus) and int(response.status_code)==int(args.matchstatus):
+						print('mrall')
+						pattern = re.compile(args.matchs)
+						match = re.search(pattern, str(response.text))
+						print(f'Read {len(response.content)} and {datas}')
+						if match:
+							if int(args.filterstatus)==int(response.status_code): print('hiii')
+							print("gotiiiiin")
+				except:
+					pass
+				try:
+					if int(response.status_code)!=int(args.filterstatus):
+						print('mrfc')
+						pattern = re.compile(args.matchs)
+						match = re.search(pattern, str(response.text))
+						print(f'Read {len(response.content)} and {datas}')
+						if match:
+							if int(args.filterstatus)==int(response.status_code): print('hiii')
+							print("gotiiiiin")
+				except:
+					pass
+				try:
+					if int(response.status_code)==int(args.matchstatus):
+						print('mrmc')
+						pattern = re.compile(args.matchs)
+						match = re.search(pattern, str(response.text))
+						print(f'Read {len(response.content)} and {datas}')
+						if match:
+							if int(args.filterstatus)==int(response.status_code): print('hiii')
+							print("gotiiiiin")
+				except:
+					pass
+			if flag2:
+				if int(response.status_code)!=int(args.filterstatus) and int(response.status_code)==int(args.matchstatus):
 					print(f'Read {len(response.content)} and {datas}')
-					if match:
-						print("gotin")
+			if flag3:
+				try:
+					if int(response.status_code)!=int(args.filterstatus):
+						print(f'Read {len(response.content)} and {datas}')
+				except:
+					if int(response.status_code)==int(args.matchstatus):
+						print(f'Read {len(response.content)} and {datas}')
+			try:
+				print( str(flag1) +str(flag2) +str(flag3))
+				if flag1==False and flag2==False and flag3==False:
+					if args.matchs:
+						pattern = re.compile(args.matchs)
+						match = re.search(pattern, str(response.text))
+						print(f'Read {len(response.content)} and {datas}')
+						if match:
+							print("goteeen")
+						
 			except:
 				pass
 			
