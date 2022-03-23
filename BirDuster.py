@@ -68,7 +68,7 @@ def get_session() -> Session:
     if not hasattr(thread_local,'session'):
         thread_local.session = requests.Session()
     return thread_local.session
-
+				
 def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	global FOUND
 	flag1=False
@@ -138,9 +138,11 @@ def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_
 						print(f'Read {len(site_request.content)} and {url}')
 		try:
 				#print( str(flag1) +str(flag2) +str(flag3))
-			if flag1==False and flag2==False and flag3==False:
-					if args.matchs:
+			#if flag1==False and flag2==False and flag3==False:
+					if args.matchs!=None:
 						regexprint(args.matchs,site_request,url)
+					else:
+						print(f'Read {len(site_request.content)} and {url}')
 		except:
 				pass
 		return 1
@@ -313,6 +315,8 @@ def download_file(url,datas, ssl_verify=True, write_response=False, timeout=DEF_
 				if flag1==False and flag2==False and flag3==False:
 					if args.matchs:
 						regexprint(args.matchs,response,datas)
+					else:
+						print(f'Read {len(response.content)} and {url}')
 			except:
 				pass
 		return 1
