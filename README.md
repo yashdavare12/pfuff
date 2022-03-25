@@ -42,4 +42,8 @@ GET request:
      python .\BirDuster.py -l .\dir_list2.txt -t 10 http://192.168.43.38/mutillidae/index.php?page=fuzz -mr "logged"        
 POST request:
      python .\BirDuster.py -l .\dir_list2.txt -t 40 -X POST http://192.168.43.38/mutillidae/index.php?page=login.php -d "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}" -mr "logged"
+GET request:
+     python .\BirDuster.py -l .\dir_list2.txt -t 40 http://192.168.43.38/mutillidae/index.php?page=login.php -H "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}" -ms 200 -fs 401 -mr "Logged"
+POST Header:
+     python .\BirDuster.py -l .\dir_list2.txt -t 40 -X POST http://192.168.43.38/mutillidae/index.php?page=login.php -H "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}" -ms 200 -fs 401 -mr "Logged"
 ```
