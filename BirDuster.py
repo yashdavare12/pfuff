@@ -68,7 +68,108 @@ def get_session() -> Session:
     if not hasattr(thread_local,'session'):
         thread_local.session = requests.Session()
     return thread_local.session
+
+def _fetch_get_header(url, headers,datas=False, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
+	global FOUND
+	flag1=False
+	flag2=False
+	flag3=False
+	#print("real headers are"+str(headers))
+	args = parse_arguemnts()
+	domain = url.split("//")[-1].split("/")[0].split('?')[0].split(':')[0]
+	
+	socket.setdefaulttimeout = timeout
+	now = datetime.now()
+	dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+	try:
+		if args.X!=None:
+			site_request = requests.post(url,datas, headers=headers, verify=ssl_verify)
+		else:
+			site_request = requests.get(url, headers=headers, verify=ssl_verify)
+		#print('requesr '+site_request.request.body)
+		FOUND.append([dt_string, url, site_request.status_code, len(site_request.content)])
+		try:
+			if args.matchs and (args.matchstatus or args.filterstatus):
+				#print('flag1 set')
+				flag1=True
+		except:
+			if args.matchstatus and args.filterstatus:
+				#print('flag2 set')
+				flag2=True
+		try:
+			if args.matchstatus and flag1==False and flag2==False:
+					#print('flag3 set')
+					flag3=True
+		except:
+				pass
+		try:
+				if args.filterstatus and flag1==False and flag2==False:
+					#print('flag3 set')
+					flag3=True
+		except:
+				pass
+		if flag1:         #all three present
+        #if int(args.filterstatus)==int(site_request.status_code): print('hiii')
+			flagin1=False
+			flagin2=False
+			try:
+				if int(site_request.status_code)!=int(args.filterstatus) and int(site_request.status_code)==int(args.matchstatus):
+					#print('hii')
+					regexprint(args.matchs,site_request,headers)
+					flagin1=True
 				
+			except:
+				pass
+			try:
+				if int(site_request.status_code)!=int(args.filterstatus) and flagin1==False and args.matchstatus==None:
+					#print('hii two')
+					regexprint(args.matchs,site_request,headers)
+					flagin2=True
+			except:
+				pass
+			try:
+				
+				if int(site_request.status_code)==int(args.matchstatus) and flagin1==False and flagin2==False and args.filterstatus==None:
+					#print('hii three')
+					regexprint(args.matchs,site_request,headers)
+			except:
+				pass
+		if flag2:
+				if int(site_request.status_code)!=int(args.filterstatus) and int(site_request.status_code)==int(args.matchstatus):
+					print(f'Read {len(site_request.content)}s dand {headers}')
+		if flag3:
+				try:
+					if int(site_request.status_code)!=int(args.filterstatus):
+						print(f'Read {len(site_request.content)} ssand {headers}')
+				except:
+					
+					if int(site_request.status_code)==int(args.matchstatus):
+						print(f'Read {len(site_request.content)} sand {headers}')
+		try:
+				#print( str(flag1) +str(flag2) +str(flag3))
+			if flag1==False and flag2==False and flag3==False:
+					if args.matchs!=None:
+						#print('hiiiiii')
+						regexprint(args.matchs,site_request,headers)
+					else:
+						print(site_request.request.headers)
+						print(f'Read {len(site_request.content)} in is and {headers}')
+		except:
+				pass
+		return 1
+
+		
+		#print(url+" ==> "+site_request.status_code, flush=True)
+		
+			#print(url+" ==> "+site_request.status_code, flush=True)
+			
+	except Exception as e:
+		FOUND.append([dt_string, url, "Error: %s" % e, 0])
+	
+	fulldesc=str(url+" ==> "+str(site_request.status_code)+"\n")
+	sys.stdout.write(fulldesc)
+	sys.stdout.flush()
+
 def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	global FOUND
 	flag1=False
@@ -116,13 +217,13 @@ def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_
 			except:
 				pass
 			try:
-				if int(site_request.status_code)!=int(args.filterstatus) and flagin1==False:
+				if int(site_request.status_code)!=int(args.filterstatus) and flagin1==False and args.matchstatus==None:
 					regexprint(args.matchs,site_request,url)
 					flagin2=True
 			except:
 				pass
 			try:
-				if int(site_request.status_code)==int(args.matchstatus) and flagin1==False and flagin2==False:
+				if int(site_request.status_code)==int(args.matchstatus) and flagin1==False and flagin2==False and args.filterstatus==None:
 					regexprint(args.matchs,site_request,url)
 			except:
 				pass
@@ -138,7 +239,7 @@ def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_
 						print(f'Read {len(site_request.content)} and {url}')
 		try:
 				#print( str(flag1) +str(flag2) +str(flag3))
-			#if flag1==False and flag2==False and flag3==False:
+			if flag1==False and flag2==False and flag3==False:
 					if args.matchs!=None:
 						regexprint(args.matchs,site_request,url)
 					else:
@@ -203,6 +304,7 @@ def parse_arguemnts():
 	parser.add_argument("-l", "--dlist", help="Directory list file")
 	parser.add_argument("-d", "--data", help="POST data")
 	parser.add_argument("-X", "--X", help="POST requests,Put requests")
+	parser.add_argument("-H", "--headers", help="Headers in a request")
 	parser.add_argument("-w", "--writeresponse", help="Write response to file", action="store_true", default=False)
 	parser.add_argument("-i", "--ignorecertificate", help="Ignore certificate errors", action="store_true", default=False)
 	parser.add_argument("-u", "--useragent", help="User agent to use.", default=generate_user_agent())
@@ -393,7 +495,31 @@ def main():
 			url=args.domain.replace("fuzz", dir)
 			URLs_to_check.append(url)
 	print(args.X)
-	if args.X == "POST":
+	if "fuzz" in args.headers:
+		print('in headers')
+		for port in ports:
+				for dir in dirs:
+					data=args.headers.replace("fuzz", dir)
+					DATA_to_check.append(ast.literal_eval(data))
+					print(ast.literal_eval(str(data)))
+					_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
+					_print_info("Execution starting with %s threads..." % args.threads)
+		processes = []
+		thread_args = []
+		if args.X!=None:
+			for i in DATA_to_check:
+				thread_args.append((args.domain,i,args.data,args.ignorecertificate,args.writeresponse, args.timeout))
+		else:
+			for i in DATA_to_check:
+				thread_args.append((args.domain,i,args.ignorecertificate,args.writeresponse, args.timeout))
+
+		with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
+			executor.map(_fetch_get_header, *zip(*thread_args))
+
+		_print_succ("Completed exection on %s items." % len(URLs_to_check))
+		print('exiting')
+		exit()
+	elif args.X == "POST":
 		if "fuzz" in args.data:
 			print("POSt")
 			for port in ports:
@@ -464,4 +590,3 @@ if __name__ == "__main__":
 
 
 # python .\BirDuster.py -l .\dir_list2.txt -X POST http://192.168.43.38/mutillidae/index.php?page=login.php -d "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}"
-
