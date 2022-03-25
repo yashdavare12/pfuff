@@ -24,6 +24,7 @@ flag):
 * `-w`/`--writereponse`: Will write HTTP/S responses to files. Default is False.
 * `-mr`/`--matchs`: Regex match in reponse.
 * `-d`/`--data`: POST data to be send in request.
+* `-H`/`--headers`: Headers to be send in request.
 * `-X`/`--X`: Specify which request to use POST, PUT
 * `--timeout`: Change default socket timeout. Default is 3 seconds.
 
