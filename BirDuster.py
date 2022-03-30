@@ -462,7 +462,7 @@ def download_file(url,unfuzzdata,datas, ssl_verify=True, write_response=False, t
 		return 'error'
 
 def main():
-	_print_banner()
+	#_print_banner()
 	args = parse_arguemnts()
 
 	# Read relevant files
@@ -495,7 +495,7 @@ def main():
 		dirs_raw = open(args.dlist, 'r', encoding='latin-1').readlines()
 		for i in dirs_raw:
 			thisDir = i.strip()
-			print(thisDir)
+			#print(thisDir)
 			if len(thisDir) == 0:
 				continue
 			dirs.append(thisDir)
@@ -521,10 +521,10 @@ def main():
 	URLs_to_check = []
 	DATA_to_check = []
 	#urls="https://%s" % (args.domain, port)
-	print(args.domain)
+
 	
 	
-	print("hii")
+	
 	for port in ports:
 		for dir in dirs:
 			url=args.domain.replace("fuzz", dir)
@@ -566,8 +566,16 @@ def main():
 	except Exception:
 		#traceback.print_exc()
 		pass
-	
-	if args.X == "POST" and args.headers==None:
+	#to check if args are present
+	argspresent=True
+	try:
+		if "fuzz" not in args.headers:
+			argspresent=True
+		else:
+			argspresent=False
+	except:
+		argspresent=True
+	if args.X == "POST" and argspresent:
 		if "fuzz" in args.data:
 			print("POSt")
 			for port in ports:
@@ -638,3 +646,5 @@ if __name__ == "__main__":
 	except KeyboardInterrupt:
 		_print_err("Got keyboard interrupt. Byebye now.")
 		exit()
+
+
