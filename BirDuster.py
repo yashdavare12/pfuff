@@ -4,7 +4,13 @@ import os
 import csv
 import sys
 import base64
+from urllib import request
+from rich.table import Table
+from rich.console import Console
+from rich.columns import Columns
+from rich import print as rprint
 import socket
+import traceback
 import pycurl
 from urllib.parse import urlencode
 import random
@@ -69,9 +75,10 @@ def get_session() -> Session:
         thread_local.session = requests.Session()
     return thread_local.session
 
-def _fetch_get_header(url, headers,datas=False, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
+def _fetch_get_header(url, headers,unfuzzdata,datas=False, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	global FOUND
 	flag1=False
+	
 	flag2=False
 	flag3=False
 	#print("real headers are"+str(headers))
@@ -93,12 +100,18 @@ def _fetch_get_header(url, headers,datas=False, ssl_verify=True, write_response=
 				#print('flag1 set')
 				flag1=True
 		except:
-			if args.matchstatus and args.filterstatus:
+			pass
+		try:
+			if args.matchstatus and args.filterstatus and flag1==False:
+				
 				#print('flag2 set')
 				flag2=True
+		except:
+			pass
 		try:
 			if args.matchstatus and flag1==False and flag2==False:
 					#print('flag3 set')
+					#print(args.matchstatus)
 					flag3=True
 		except:
 				pass
@@ -114,8 +127,10 @@ def _fetch_get_header(url, headers,datas=False, ssl_verify=True, write_response=
 			flagin2=False
 			try:
 				if int(site_request.status_code)!=int(args.filterstatus) and int(site_request.status_code)==int(args.matchstatus):
-					#print('hii')
-					regexprint(args.matchs,site_request,headers)
+					
+					#print('hiii')
+					#regexprint(table,args.matchs,site_request,headers)
+					regexprint(args.matchs,site_request,headers,unfuzzdata)
 					flagin1=True
 				
 			except:
@@ -123,7 +138,8 @@ def _fetch_get_header(url, headers,datas=False, ssl_verify=True, write_response=
 			try:
 				if int(site_request.status_code)!=int(args.filterstatus) and flagin1==False and args.matchstatus==None:
 					#print('hii two')
-					regexprint(args.matchs,site_request,headers)
+					#regexprint(args.matchs,site_request,headers)
+					regexprint(args.matchs,site_request,headers,unfuzzdata)
 					flagin2=True
 			except:
 				pass
@@ -131,29 +147,34 @@ def _fetch_get_header(url, headers,datas=False, ssl_verify=True, write_response=
 				
 				if int(site_request.status_code)==int(args.matchstatus) and flagin1==False and flagin2==False and args.filterstatus==None:
 					#print('hii three')
-					regexprint(args.matchs,site_request,headers)
+					#regexprint(args.matchs,site_request,headers)
+					regexprint(args.matchs,site_request,headers,unfuzzdata)
 			except:
 				pass
 		if flag2:
 				if int(site_request.status_code)!=int(args.filterstatus) and int(site_request.status_code)==int(args.matchstatus):
-					print(f'Read {len(site_request.content)}s dand {headers}')
+					#print('hii')
+					nonregexprint(site_request,headers,unfuzzdata)
 		if flag3:
 				try:
 					if int(site_request.status_code)!=int(args.filterstatus):
-						print(f'Read {len(site_request.content)} ssand {headers}')
+						nonregexprint(site_request,headers,unfuzzdata)
 				except:
 					
 					if int(site_request.status_code)==int(args.matchstatus):
-						print(f'Read {len(site_request.content)} sand {headers}')
+						nonregexprint(site_request,headers,unfuzzdata)
 		try:
 				#print( str(flag1) +str(flag2) +str(flag3))
 			if flag1==False and flag2==False and flag3==False:
 					if args.matchs!=None:
 						#print('hiiiiii')
-						regexprint(args.matchs,site_request,headers)
+						regexprint(args.matchs,site_request,headers,unfuzzdata)
+						
 					else:
-						print(site_request.request.headers)
-						print(f'Read {len(site_request.content)} in is and {headers}')
+						#print(site_request.request.headers)
+						#print('hxxx')
+						nonregexprint(site_request,headers,unfuzzdata)
+						#print(f'Read {len(site_request.content)} in is and {headers}')
 		except:
 				pass
 		return 1
@@ -170,7 +191,7 @@ def _fetch_get_header(url, headers,datas=False, ssl_verify=True, write_response=
 	sys.stdout.write(fulldesc)
 	sys.stdout.flush()
 
-def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
+def _fetch_url(url,unfuzzdata, headers=None, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	global FOUND
 	flag1=False
 	flag2=False
@@ -211,39 +232,44 @@ def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_
 			flagin2=False
 			try:
 				if int(site_request.status_code)!=int(args.filterstatus) and int(site_request.status_code)==int(args.matchstatus):
-					regexprint(args.matchs,site_request,url)
+					regexprint(args.matchs,site_request,url,unfuzzdata)
 					flagin1=True
 				
 			except:
 				pass
 			try:
 				if int(site_request.status_code)!=int(args.filterstatus) and flagin1==False and args.matchstatus==None:
-					regexprint(args.matchs,site_request,url)
+					regexprint(args.matchs,site_request,url,unfuzzdata)
 					flagin2=True
 			except:
 				pass
 			try:
 				if int(site_request.status_code)==int(args.matchstatus) and flagin1==False and flagin2==False and args.filterstatus==None:
-					regexprint(args.matchs,site_request,url)
+					regexprint(args.matchs,site_request,url,unfuzzdata)
 			except:
 				pass
 		if flag2:
 				if int(site_request.status_code)!=int(args.filterstatus) and int(site_request.status_code)==int(args.matchstatus):
-					print(f'Read {len(site_request.content)} and {url}')
+					#print(f'Read {len(site_request.content)} and {url}')
+					nonregexprint(site_request,url,unfuzzdata)
 		if flag3:
 				try:
 					if int(site_request.status_code)!=int(args.filterstatus):
-						print(f'Read {len(site_request.content)} and {url}')
+						#print(f'Read {len(site_request.content)} and {url}')
+						nonregexprint(site_request,url,unfuzzdata)
 				except:
 					if int(site_request.status_code)==int(args.matchstatus):
-						print(f'Read {len(site_request.content)} and {url}')
+						#print(f'Read {len(site_request.content)} and {url}')
+						nonregexprint(site_request,url,unfuzzdata)
 		try:
 				#print( str(flag1) +str(flag2) +str(flag3))
 			if flag1==False and flag2==False and flag3==False:
 					if args.matchs!=None:
-						regexprint(args.matchs,site_request,url)
+						
+						regexprint(args.matchs,site_request,url,unfuzzdata)
 					else:
-						print(f'Read {len(site_request.content)} and {url}')
+						nonregexprint(site_request,url,unfuzzdata)
+						#print(f'Read {len(site_request.content)} and {url}')
 		except:
 				pass
 		return 1
@@ -259,36 +285,6 @@ def _fetch_url(url, headers, ssl_verify=True, write_response=False, timeout=DEF_
 	fulldesc=str(url+" ==> "+str(site_request.status_code)+"\n")
 	sys.stdout.write(fulldesc)
 	sys.stdout.flush()
-
-def _fetch_post(url, ssl_verify=False, write_response=False,stream=True, timeout=DEF_TIMEOUT):
-	global FOUND
-	#domain = url.split("//")[-1].split("/")[0].split('?')[0].split(':')[0]
-	socket.setdefaulttimeout = timeout
-	now = datetime.now()
-	dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-	try:
-		print(url)
-		
-		site_request = requests.post(url,data={'Token': '326729'})
-		#site_request = await session.post(url,data={'y':'value'}, headers=headers, verify=False)
-		#site_request =requests.api.request('post', url, data={'bar':'baz'}, json=None, verify=False)
-		fulldesc= str(url+" ==> \n"+site_request.body+" = "+site_request.status_code)
-		return fulldesc
-		sys.stdout.write('ss')
-		print('hii')
-		""" FOUND.append([dt_string, url, site_request.status_code, len(site_request.content)])
-			if write_response:
-				file_name_string = "".join(x for x in url if x.isalnum())
-				f = open(os.path.join(domain,file_name_string), 'wb')
-				f.write(site_request.content)
-				f.close()
-				print(url+" ==> \n"+site_request.body+" = "+site_request.status_code, flush=True)	 """	
-	except Exception as e:
-		FOUND.append([dt_string, url, "Error: %s" % e, 0])
-	
-	sys.stdout.write('jiii')
-
-
 	
 	
 	
@@ -343,15 +339,47 @@ def parse_arguemnts():
 		else:
 			_print_info("Original file will be overwritten.")
 	return args
+def nonregexprint(response,datas,unfuzzdata):
+	#print('lmao')
+	console = Console()
+	#print(response.status_code)
+	#print(response.status_code)
+	#table.add_row(str(len(response.content)), str(datas),str(response.status_code))
+	lists=[]
+	lists.append(str(len(response.content)))
+	lists.append( str(unfuzzdata))
+	lists.append( str(response.status_code))
+	#for i in lists:
+		#print(i)
+	#print(f'Read {len(response.content)} and {datas}')
+	columns = Columns(lists, equal=True, expand=True)
+	print(str(len(response.content))+"  "+str(unfuzzdata)+"  "+str(response.status_code))
+	
 
-def regexprint(argsmatch,response,datas):
+def regexprint(argsmatch,response,datas,unfuzzdata):
+	#print('lmao')
+	console = Console()
 	pattern = re.compile(argsmatch)
 	match = re.search(pattern, str(response.text))
-	print(f'Read {len(response.content)} and {datas}')
+	#print(response.status_code)
+	#table.add_row(str(len(response.content)), str(datas),str(response.status_code))
+	lists=[]
+	lists.append(str(len(response.content)))
+	lists.append( str(unfuzzdata))
+	lists.append( str(response.status_code))
+	#for i in lists:
+		#print(i)
+	#print(f'Read {len(response.content)} and {datas}')
+	columns = Columns(lists)
+	#print(str(len(response.content))+"  "+str(unfuzzdata)+"  "+str(response.status_code))
+	
+	#console.print(table)
 	if match:
-			print("gotiiiiin")
+			print(str(len(response.content))+"  "+str(unfuzzdata)+"  "+str(response.status_code))
+			#print("gotiiiiin")
+			pass
 
-def download_file(url,datas, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
+def download_file(url,unfuzzdata,datas, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	args = parse_arguemnts()
 	flag1=False
 	flag2=False
@@ -386,39 +414,46 @@ def download_file(url,datas, ssl_verify=True, write_response=False, timeout=DEF_
 				flagin2=False
 				try:
 					if int(response.status_code)!=int(args.filterstatus) and int(response.status_code)==int(args.matchstatus):
-						regexprint(args.matchs,response,datas)
+						regexprint(args.matchs,response,datas,unfuzzdata)
 						flagin1=True
 						
 				except:
 					pass
 				try:
-					if int(response.status_code)!=int(args.filterstatus) and flagin1==False:
-						regexprint(args.matchs,response,datas)
+					if int(response.status_code)!=int(args.filterstatus) and flagin1==False  and args.matchstatus==None:
+						#print('dydyyd')
+						regexprint(args.matchs,response,datas,unfuzzdata)
 						flagin2=True
 				except:
 					pass
 				try:
-					if int(response.status_code)==int(args.matchstatus) and flagin1==False and flagin2==False:
-						regexprint(args.matchs,response,datas)
+					if int(response.status_code)==int(args.matchstatus) and flagin1==False and flagin2==False  and args.filterstatus==None:
+						regexprint(args.matchs,response,datas,unfuzzdata)
 				except:
 					pass
 			if flag2:
 				if int(response.status_code)!=int(args.filterstatus) and int(response.status_code)==int(args.matchstatus):
-					print(f'Read {len(response.content)} and {datas}')
+					#print(f'Read {len(response.content)} and {datas}')
+					nonregexprint(response,datas,unfuzzdata)
 			if flag3:
 				try:
 					if int(response.status_code)!=int(args.filterstatus):
-						print(f'Read {len(response.content)} and {datas}')
+						#print(f'Read {len(response.content)} and {datas}')
+						nonregexprint(response,datas,unfuzzdata)
 				except:
 					if int(response.status_code)==int(args.matchstatus):
-						print(f'Read {len(response.content)} and {datas}')
+						#print('kali')
+						nonregexprint(response,datas,unfuzzdata)
+						#print(f'Read {len(response.content)} and {datas}')
 			try:
 				#print( str(flag1) +str(flag2) +str(flag3))
 				if flag1==False and flag2==False and flag3==False:
 					if args.matchs:
-						regexprint(args.matchs,response,datas)
+						#print('kalis')
+						regexprint(args.matchs,response,datas,unfuzzdata)
 					else:
-						print(f'Read {len(response.content)} and {url}')
+						
+						nonregexprint(response,datas,unfuzzdata)
 			except:
 				pass
 		return 1
@@ -493,54 +528,68 @@ def main():
 	for port in ports:
 		for dir in dirs:
 			url=args.domain.replace("fuzz", dir)
-			URLs_to_check.append(url)
+			l=[dir,url]
+			URLs_to_check.append(tuple(l))
+			#URLs_to_check.append(url)
 	print(args.X)
-	if "fuzz" in args.headers:
-		print('in headers')
-		for port in ports:
-				for dir in dirs:
-					data=args.headers.replace("fuzz", dir)
-					DATA_to_check.append(ast.literal_eval(data))
-					print(ast.literal_eval(str(data)))
-					_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
-					_print_info("Execution starting with %s threads..." % args.threads)
-		processes = []
-		thread_args = []
-		if args.X!=None:
-			for i in DATA_to_check:
-				thread_args.append((args.domain,i,args.data,args.ignorecertificate,args.writeresponse, args.timeout))
-		else:
-			for i in DATA_to_check:
-				thread_args.append((args.domain,i,args.ignorecertificate,args.writeresponse, args.timeout))
+	try:
+		if "fuzz" in args.headers:
+			print('in headers')
+			for port in ports:
+					for dir in dirs:
+						data=args.headers.replace("fuzz", dir)
+						l=[dir,ast.literal_eval(data)]
+						DATA_to_check.append(tuple(l))
+						#DATA_to_check.append(ast.literal_eval(data))
+						#print(ast.literal_eval(str(data)))
+						_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
+						_print_info("Execution starting with %s threads..." % args.threads)
+			processes = []
+			thread_args = []
+			table = Table(title="Star Wars Movies")
+			table.add_column("Data Lenght", justify="right", style="cyan", no_wrap=True)
+			table.add_column("Data modified", style="magenta")
+			table.add_column("Status code", justify="right", style="green")
+			if args.X!=None:
+				for i in DATA_to_check:
+					thread_args.append((args.domain,i[1],i[0],args.data,args.ignorecertificate,args.writeresponse, args.timeout))
+			else:
+				for i in DATA_to_check:
+					thread_args.append((args.domain,i[1],i[0],args.ignorecertificate,args.writeresponse, args.timeout))
 
-		with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
-			executor.map(_fetch_get_header, *zip(*thread_args))
+			with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
+				executor.map(_fetch_get_header, *zip(*thread_args))
 
-		_print_succ("Completed exection on %s items." % len(URLs_to_check))
-		print('exiting')
-		exit()
-	elif args.X == "POST":
+			_print_succ("Completed exection on %s items." % len(URLs_to_check))
+			print('exiting')
+			exit()
+	except Exception:
+		#traceback.print_exc()
+		pass
+	
+	if args.X == "POST" and args.headers==None:
 		if "fuzz" in args.data:
 			print("POSt")
 			for port in ports:
 				for dir in dirs:
 					data=args.data.replace("fuzz", dir)
-					DATA_to_check.append(ast.literal_eval(data))
-					print(ast.literal_eval(str(data)))
+					l=[dir,ast.literal_eval(data)]
+					DATA_to_check.append(tuple(l))
+					#print(type(tuple(l)))
 					_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
 					_print_info("Execution starting with %s threads..." % args.threads)
 			processes = []
 			thread_args = []
-			
+			#exit()
 			tokens = {'Token': '326729'}
-			print((DATA_to_check[0]))
+			#print((DATA_to_check[0]))
 			#for i in DATA_to_check:
 			#	print(i)
 			#NEW_DATA_CHECK= DATA_to_check.items()
 
 
 			for i in DATA_to_check:
-				thread_args.append((args.domain,i,args.ignorecertificate,args.writeresponse, args.timeout))
+				thread_args.append((args.domain,i[0],i[1],args.ignorecertificate,args.writeresponse, args.timeout))
 
 			with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
 				executor.map(download_file, *zip(*thread_args))
@@ -556,11 +605,13 @@ def main():
 		processes = []
 		_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
 		_print_info("Execution starting with %s threads..." % args.threads)
-
+		#for i in URLs_to_check:
+		#	print(i[1])
+		#print((URLs_to_check[1]))
 		thread_args = []
 		
 		for i in URLs_to_check:
-			thread_args.append((i,headers,args.ignorecertificate,args.writeresponse, args.timeout))
+			thread_args.append((i[1],i[0],headers,args.ignorecertificate,args.writeresponse, args.timeout))
 
 		with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
 			executor.map(_fetch_url, *zip(*thread_args))
@@ -587,6 +638,3 @@ if __name__ == "__main__":
 	except KeyboardInterrupt:
 		_print_err("Got keyboard interrupt. Byebye now.")
 		exit()
-
-
-# python .\BirDuster.py -l .\dir_list2.txt -X POST http://192.168.43.38/mutillidae/index.php?page=login.php -d "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}"
