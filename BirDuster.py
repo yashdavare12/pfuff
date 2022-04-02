@@ -342,8 +342,25 @@ def parse_arguemnts():
 		else:
 			_print_info("Original file will be overwritten.")
 	return args
-def respcolor():
-	pass
+def respcolor(response):
+	try:
+		if response.status_code >=400 and  response.status_code<=499:			#404 resp
+			return 'red'
+		if response.status_code >=200 and  response.status_code<=299:			#200 resp
+			return 'green'
+		if response.status_code >=500 and  response.status_code<=599:			#501 errors
+			return 'violet'
+		if response.status_code >=300 and  response.status_code<=399:			#301 errors
+			return 'yellow'
+	except:
+		if response >=400 and  response<=499:			#404 resp
+			return 'red'
+		if response >=200 and  response<=299:			#200 resp
+			return 'green'
+		if response >=500 and  response<=599:			#501 errors
+			return 'violet'
+		if response >=300 and  response<=399:			#301 errors
+			return 'yellow'
 def nonregexprint(response,datas,unfuzzdata):
 	#print('lmao')
 	console = Console()
@@ -353,14 +370,9 @@ def nonregexprint(response,datas,unfuzzdata):
 	#for i in lists:
 		#print(i)
 	#print(f'Read {len(response.content)} and {datas}')
-	if response.status_code >=400 and  response.status_code<=499:			#404 resp
-		console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][red]{str(response.status_code): >{20}}[/]")
-	if response.status_code >=200 and  response.status_code<=299:			#200 resp
-		console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][green]{str(response.status_code): >{20}}[/]")
-	if response.status_code >=500 and  response.status_code<=599:			#501 errors
-		console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][violet]{str(response.status_code): >{20}}[/]")
-	if response.status_code >=300 and  response.status_code<=399:			#301 errors
-		console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][yellow]{str(response.status_code): >{20}}[/]")
+	
+	console.print(f"[white  not bold]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][{respcolor(response)}]{str(response.status_code): >{20}}[/]")
+
 	#print(str(len(response.content))+"  "+str(unfuzzdata)+"  "+str(response.status_code))
 	#rprint(f"{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}{str(response.status_code): >{20}}")
 	
@@ -382,14 +394,8 @@ def regexprint(argsmatch,response,datas,unfuzzdata):
 	#console.print(table)
 	if match:
 			#print(str(len(response.content))+"  "+str(unfuzzdata)+"  "+str(response.status_code))
-			if response.status_code >=400 and  response.status_code<=499:			#404 resp
-				console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][red]{str(response.status_code): >{20}}[/]")
-			if response.status_code >=200 and  response.status_code<=299:			#200 resp
-				console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][green]{str(response.status_code): >{20}}[/]")
-			if response.status_code >=500 and  response.status_code<=599:			#501 errors
-				console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][violet]{str(response.status_code): >{20}}[/]")
-			if response.status_code >=300 and  response.status_code<=399:			#301 errors
-				console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][yellow]{str(response.status_code): >{20}}[/]")
+			console.print(f"[white not bold]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][{respcolor(response)}]{str(response.status_code): >{20}}[/]")
+
 			#print("gotiiiiin")
 			pass
 
@@ -484,15 +490,18 @@ def get_Method():
 		return 'GET'
 	pass
 def show_headers():
+	console = Console()
 	args = parse_arguemnts()
-	rprint(f" ::  {str('Methods'): <{20}}{str(get_Method()): <{20}}")
+	console.print(f" ::  {str('Methods'): <{20}}{str(get_Method()): <{20}}")
 	print(f" ::  {str('Url'): <{20}}{str(args.domain): <{20}}")
+	#print({respcolor(args.matchstatus)})
 	try:
-		print(f" ::  {str('Matcher'): <{20}}{str(args.matchstatus): <{20}}")
+
+		console.print(f" ::  {str('Matcher'): <{20}}[{respcolor(int(args.matchstatus))}]{str(args.matchstatus): <{20}}[/]")
 	except:
 		pass
 	try:
-		print(f" ::  {str('Filter'): <{20}}{str(args.filterstatus): <{20}}")
+		console.print(f" ::  {str('Filter'): <{20}}[{respcolor(int(args.filterstatus))}]{str(args.filterstatus): <{20}}")
 	except:
 		pass
 	pass
@@ -591,7 +600,7 @@ def main():
 			_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
 			_print_info("Execution starting with %s threads..." % args.threads)
 			print()
-			rprint(f"{str('Size'): <{20}}{str('Payload'): <{20}}{str('Status Code'): >{20}}")
+			console.print(f"[violet]{str('Size'): <{20}}{str('Payload'): <{23}}{str('Status Code'): >{20}}[/]" ,style="bold violet")
 			processes = []
 			thread_args = []
 			
@@ -632,7 +641,7 @@ def main():
 			_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
 			_print_info("Execution starting with %s threads..." % args.threads)
 			print()
-			rprint(f"{str('Size'): <{20}}{str('Payload'): <{20}}{str('Status Code'): >{20}}")
+			console.print(f"[violet]{str('Size'): <{20}}{str('Payload'): <{23}}{str('Status Code'): >{20}}[/]" ,style="bold violet")
 			processes = []
 			thread_args = []
 			#exit()
@@ -661,7 +670,7 @@ def main():
 		_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
 		_print_info("Execution starting with %s threads..." % args.threads)
 		print()
-		rprint(f"{str('Size'): <{20}}{str('Payload'): <{20}}{str('Status Code'): >{20}}")
+		console.print(f"[violet]{str('Size'): <{20}}{str('Payload'): <{23}}{str('Status Code'): >{20}}[/]" ,style="bold violet")
 		
 		#for i in URLs_to_check:
 		#	print(i[1])
