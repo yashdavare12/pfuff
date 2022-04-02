@@ -353,7 +353,8 @@ def nonregexprint(response,datas,unfuzzdata):
 		#print(i)
 	#print(f'Read {len(response.content)} and {datas}')
 	columns = Columns(lists, equal=True, expand=True)
-	print(str(len(response.content))+"  "+str(unfuzzdata)+"  "+str(response.status_code))
+	#print(str(len(response.content))+"  "+str(unfuzzdata)+"  "+str(response.status_code))
+	rprint(f"{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}{str(response.status_code): >{20}}")
 	
 
 def regexprint(argsmatch,response,datas,unfuzzdata):
@@ -375,7 +376,8 @@ def regexprint(argsmatch,response,datas,unfuzzdata):
 	
 	#console.print(table)
 	if match:
-			print(str(len(response.content))+"  "+str(unfuzzdata)+"  "+str(response.status_code))
+			#print(str(len(response.content))+"  "+str(unfuzzdata)+"  "+str(response.status_code))
+			rprint(f"{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}{str(response.status_code): >{20}}")
 			#print("gotiiiiin")
 			pass
 
