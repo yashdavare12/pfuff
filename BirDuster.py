@@ -342,22 +342,27 @@ def parse_arguemnts():
 		else:
 			_print_info("Original file will be overwritten.")
 	return args
+def respcolor():
+	pass
 def nonregexprint(response,datas,unfuzzdata):
 	#print('lmao')
 	console = Console()
 	#print(response.status_code)
 	#print(response.status_code)
 	#table.add_row(str(len(response.content)), str(datas),str(response.status_code))
-	lists=[]
-	lists.append(str(len(response.content)))
-	lists.append( str(unfuzzdata))
-	lists.append( str(response.status_code))
 	#for i in lists:
 		#print(i)
 	#print(f'Read {len(response.content)} and {datas}')
-	columns = Columns(lists, equal=True, expand=True)
+	if response.status_code >=400 and  response.status_code<=499:			#404 resp
+		console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][red]{str(response.status_code): >{20}}[/]")
+	if response.status_code >=200 and  response.status_code<=299:			#200 resp
+		console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][green]{str(response.status_code): >{20}}[/]")
+	if response.status_code >=500 and  response.status_code<=599:			#501 errors
+		console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][violet]{str(response.status_code): >{20}}[/]")
+	if response.status_code >=300 and  response.status_code<=399:			#301 errors
+		console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][yellow]{str(response.status_code): >{20}}[/]")
 	#print(str(len(response.content))+"  "+str(unfuzzdata)+"  "+str(response.status_code))
-	rprint(f"{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}{str(response.status_code): >{20}}")
+	#rprint(f"{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}{str(response.status_code): >{20}}")
 	
 
 def regexprint(argsmatch,response,datas,unfuzzdata):
@@ -367,20 +372,24 @@ def regexprint(argsmatch,response,datas,unfuzzdata):
 	match = re.search(pattern, str(response.text))
 	#print(response.status_code)
 	#table.add_row(str(len(response.content)), str(datas),str(response.status_code))
-	lists=[]
-	lists.append(str(len(response.content)))
-	lists.append( str(unfuzzdata))
-	lists.append( str(response.status_code))
+	
 	#for i in lists:
 		#print(i)
 	#print(f'Read {len(response.content)} and {datas}')
-	columns = Columns(lists)
+	
 	#print(str(len(response.content))+"  "+str(unfuzzdata)+"  "+str(response.status_code))
 	
 	#console.print(table)
 	if match:
 			#print(str(len(response.content))+"  "+str(unfuzzdata)+"  "+str(response.status_code))
-			rprint(f"{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}{str(response.status_code): >{20}}")
+			if response.status_code >=400 and  response.status_code<=499:			#404 resp
+				console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][red]{str(response.status_code): >{20}}[/]")
+			if response.status_code >=200 and  response.status_code<=299:			#200 resp
+				console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][green]{str(response.status_code): >{20}}[/]")
+			if response.status_code >=500 and  response.status_code<=599:			#501 errors
+				console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][violet]{str(response.status_code): >{20}}[/]")
+			if response.status_code >=300 and  response.status_code<=399:			#301 errors
+				console.print(f"[white]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][yellow]{str(response.status_code): >{20}}[/]")
 			#print("gotiiiiin")
 			pass
 
