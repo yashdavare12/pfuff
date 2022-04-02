@@ -5,10 +5,12 @@ import csv
 import sys
 import base64
 import pyfiglet
+import time
 from urllib import request
 from rich.table import Table
 from rich.console import Console
 from rich.columns import Columns
+from rich import segment
 from rich import print as rprint
 import socket
 import traceback
@@ -463,13 +465,40 @@ def download_file(url,unfuzzdata,datas, ssl_verify=True, write_response=False, t
 	except Exception as e:
 		print(e)
 		return 'error'
-
+def get_Method():
+	args = parse_arguemnts()
+	try:
+		if(args.X):
+			return 'POST'
+		raise 'not a post type'
+	except:
+		return 'GET'
+	pass
+def show_headers():
+	args = parse_arguemnts()
+	rprint(f" ::  {str('Methods'): <{20}}{str(get_Method()): <{20}}")
+	print(f" ::  {str('Url'): <{20}}{str(args.domain): <{20}}")
+	try:
+		print(f" ::  {str('Matcher'): <{20}}{str(args.matchstatus): <{20}}")
+	except:
+		pass
+	try:
+		print(f" ::  {str('Filter'): <{20}}{str(args.filterstatus): <{20}}")
+	except:
+		pass
+	pass
 def main():
 	#_print_banner()
 	result = pyfiglet.figlet_format("pffuf", font = "slant"  )
 	console = Console()
 	console.status("[bold green]Working on tasks...")
 	console.print(result ,style="bold blue")
+	
+	rprint(u'\u2500' * 50)
+	show_headers()
+	rprint(u'\u2500' * 50)
+	print("")
+	
 	#rprint(result)
 	args = parse_arguemnts()
 
@@ -542,7 +571,7 @@ def main():
 	#print(args.X)
 	try:
 		if "fuzz" in args.headers:
-			print('in headers')
+			#print('in headers')
 			for port in ports:
 					for dir in dirs:
 						data=args.headers.replace("fuzz", dir)
@@ -550,14 +579,13 @@ def main():
 						DATA_to_check.append(tuple(l))
 						#DATA_to_check.append(ast.literal_eval(data))
 						#print(ast.literal_eval(str(data)))
-						_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
-						_print_info("Execution starting with %s threads..." % args.threads)
+			_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
+			_print_info("Execution starting with %s threads..." % args.threads)
+			print()
+			rprint(f"{str('Size'): <{20}}{str('Payload'): <{20}}{str('Status Code'): >{20}}")
 			processes = []
 			thread_args = []
-			table = Table(title="Star Wars Movies")
-			table.add_column("Data Lenght", justify="right", style="cyan", no_wrap=True)
-			table.add_column("Data modified", style="magenta")
-			table.add_column("Status code", justify="right", style="green")
+			
 			if args.X!=None:
 				for i in DATA_to_check:
 					thread_args.append((args.domain,i[1],i[0],args.data,args.ignorecertificate,args.writeresponse, args.timeout))
@@ -585,15 +613,17 @@ def main():
 		argspresent=True
 	if args.X == "POST" and argspresent:
 		if "fuzz" in args.data:
-			print("POSt")
+			#print("POSt")
 			for port in ports:
 				for dir in dirs:
 					data=args.data.replace("fuzz", dir)
 					l=[dir,ast.literal_eval(data)]
 					DATA_to_check.append(tuple(l))
 					#print(type(tuple(l)))
-					_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
-					_print_info("Execution starting with %s threads..." % args.threads)
+			_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
+			_print_info("Execution starting with %s threads..." % args.threads)
+			print()
+			rprint(f"{str('Size'): <{20}}{str('Payload'): <{20}}{str('Status Code'): >{20}}")
 			processes = []
 			thread_args = []
 			#exit()
@@ -621,7 +651,9 @@ def main():
 		processes = []
 		_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
 		_print_info("Execution starting with %s threads..." % args.threads)
+		print()
 		rprint(f"{str('Size'): <{20}}{str('Payload'): <{20}}{str('Status Code'): >{20}}")
+		
 		#for i in URLs_to_check:
 		#	print(i[1])
 		#print((URLs_to_check[1]))
