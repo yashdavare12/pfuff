@@ -195,8 +195,11 @@ def _fetch_get_header(url, headers,unfuzzdata,datas=False, ssl_verify=True, writ
 	sys.stdout.write(fulldesc)
 	sys.stdout.flush()
 
-def _fetch_url(url,unfuzzdata, headers=None, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
+def _fetch_url(url,unfuzzdata,count, headers=None, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	global FOUND
+	console = Console()
+	
+	#print(count)
 	flag1=False
 	flag2=False
 	flag3=False
@@ -276,6 +279,11 @@ def _fetch_url(url,unfuzzdata, headers=None, ssl_verify=True, write_response=Fal
 						#print(f'Read {len(site_request.content)} and {url}')
 		except:
 				pass
+		#print(f"number{count}",end="\r")
+		#sys.stdout.write(f"\r :: Progress: [{count} / {ast.Global.max}]")
+		#sys.stdout.flush()
+		console.print(f"[bold green] :: Progress: [{count} / {ast.Global.max}]",end='\r',style="bold")
+		#print(f"Progress: [{count} / {ast.Global.max}]",end='\r')
 		return 1
 
 		
@@ -691,10 +699,13 @@ def main():
 		#	print(i[1])
 		#print((URLs_to_check[1]))
 		thread_args = []
-		
+		count=0
 		for i in URLs_to_check:
-			thread_args.append((i[1],i[0],headers,args.ignorecertificate,args.writeresponse, args.timeout))
-
+			count+=1
+			thread_args.append((i[1],i[0],count,headers,args.ignorecertificate,args.writeresponse, args.timeout))
+		#print(thread_args[-1][2])
+		max = thread_args[-1][2]
+		ast.Global.max=max
 		with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
 			executor.map(_fetch_url, *zip(*thread_args))
 
