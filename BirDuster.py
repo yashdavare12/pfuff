@@ -71,7 +71,8 @@ def _print_succ(message):
 	sys.stdout.write(Fore.GREEN + "[+]"+Style.RESET_ALL+"\t%s\n" % message)
 
 def _print_info(message):
-	sys.stdout.write(Fore.BLUE + "[+]" + Style.RESET_ALL + "\t%s\n" % message)
+	console = Console()
+	console.print("[blue][+][/]\t[bold]" + message+"[/]")
 
 def get_session() -> Session:
     if not hasattr(thread_local,'session'):
@@ -371,7 +372,7 @@ def nonregexprint(response,datas,unfuzzdata):
 		#print(i)
 	#print(f'Read {len(response.content)} and {datas}')
 	
-	console.print(f"[white  not bold]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][{respcolor(response)}]{str(response.status_code): >{20}}[/]")
+	console.print(f"[white  bold]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][{respcolor(response)}]{str(response.status_code): >{20}}[/]")
 
 	#print(str(len(response.content))+"  "+str(unfuzzdata)+"  "+str(response.status_code))
 	#rprint(f"{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}{str(response.status_code): >{20}}")
@@ -394,7 +395,7 @@ def regexprint(argsmatch,response,datas,unfuzzdata):
 	#console.print(table)
 	if match:
 			#print(str(len(response.content))+"  "+str(unfuzzdata)+"  "+str(response.status_code))
-			console.print(f"[white not bold]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][{respcolor(response)}]{str(response.status_code): >{20}}[/]")
+			console.print(f"[white bold]{str(len(response.content)): <{20}}{str(unfuzzdata): <{20}}[/][{respcolor(response)}]{str(response.status_code): >{20}}[/]")
 
 			#print("gotiiiiin")
 			pass
@@ -492,16 +493,16 @@ def get_Method():
 def show_headers():
 	console = Console()
 	args = parse_arguemnts()
-	console.print(f" ::  {str('Methods'): <{20}}{str(get_Method()): <{20}}")
-	print(f" ::  {str('Url'): <{20}}{str(args.domain): <{20}}")
+	console.print(f" ::  {str('Methods'): <{20}}[violet]{str(get_Method()): <{20}}[/]",style="bold")
+	console.print(f" ::  {str('Url'): <{20}}[not underline bold]{str(args.domain): <{20}}[/]",style="bold")
 	#print({respcolor(args.matchstatus)})
 	try:
 
-		console.print(f" ::  {str('Matcher'): <{20}}[{respcolor(int(args.matchstatus))}]{str(args.matchstatus): <{20}}[/]")
+		console.print(f" ::  {str('Matcher'): <{20}}[{respcolor(int(args.matchstatus))}]{str(args.matchstatus): <{20}}[/]",style="bold")
 	except:
 		pass
 	try:
-		console.print(f" ::  {str('Filter'): <{20}}[{respcolor(int(args.filterstatus))}]{str(args.filterstatus): <{20}}")
+		console.print(f" ::  {str('Filter'): <{20}}[{respcolor(int(args.filterstatus))}]{str(args.filterstatus): <{20}}",style="bold")
 	except:
 		pass
 	pass
