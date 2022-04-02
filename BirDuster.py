@@ -4,6 +4,7 @@ import os
 import csv
 import sys
 import base64
+import pyfiglet
 from urllib import request
 from rich.table import Table
 from rich.console import Console
@@ -465,6 +466,11 @@ def download_file(url,unfuzzdata,datas, ssl_verify=True, write_response=False, t
 
 def main():
 	#_print_banner()
+	result = pyfiglet.figlet_format("pffuf", font = "slant"  )
+	console = Console()
+	console.status("[bold green]Working on tasks...")
+	console.print(result ,style="bold blue")
+	#rprint(result)
 	args = parse_arguemnts()
 
 	# Read relevant files
@@ -533,7 +539,7 @@ def main():
 			l=[dir,url]
 			URLs_to_check.append(tuple(l))
 			#URLs_to_check.append(url)
-	print(args.X)
+	#print(args.X)
 	try:
 		if "fuzz" in args.headers:
 			print('in headers')
@@ -615,6 +621,7 @@ def main():
 		processes = []
 		_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
 		_print_info("Execution starting with %s threads..." % args.threads)
+		rprint(f"{str('Size'): <{20}}{str('Payload'): <{20}}{str('Status Code'): >{20}}")
 		#for i in URLs_to_check:
 		#	print(i[1])
 		#print((URLs_to_check[1]))
@@ -629,7 +636,7 @@ def main():
 	_print_succ("Completed exection on %s items." % len(URLs_to_check))
 
 	# Write output to file
-	with open(args.output, 'w', newline='') as csvfile:
+	'''with open(args.output, 'w', newline='') as csvfile:
 		fieldnames = ['Datetime', 'URL', 'StatusCode', 'ResponseSize']
 		writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
@@ -638,7 +645,7 @@ def main():
 			thisItem = {'Datetime': item[0], 'URL':item[1], 'StatusCode':item[2], 'ResponseSize': item[3]}
 			writer.writerow(thisItem)
 
-	_print_succ("Wrote all items to file '%s'." % args.output)
+	_print_succ("Wrote all items to file '%s'." % args.output)'''
 
 	exit()
 
