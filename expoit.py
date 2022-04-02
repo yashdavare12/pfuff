@@ -1,39 +1,32 @@
-from tokenize import Token
-from numpy import argsort
-import requests
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from time import time
-import argparse
-import json
+# progress.py
+import sys
+import time
+from rich.progress import track
 
 
-def parse_arguemnts():
-	parser = argparse.ArgumentParser()
-	parser.add_argument("-d", "--data", help="POST data")
-	args = parser.parse_args();return args
+def get_linecount(filename):
+    with open(filename, "r") as infile:
+        i = -1
+        for i, _ in enumerate(infile):
+            pass
+        return i + 1
 
-args = parse_arguemnts()
-print(args.data)
-url_list = [
-    "https://httpbin.org/post"
+
+def process(line):
+    time.sleep(1)
     
-]
-tokens = "{'foo': 'bar'}"
 
-def download_file(url):
-    html = requests.post(url,stream=True, data=Token)
-    print(type(html.request.body))
-    return (json.load((html.content).decode('ascii')))
-
-start = time()
-
-processes = []
-with ThreadPoolExecutor(max_workers=200) as executor:
-    for url in url_list:
-        processes.append(executor.submit(download_file, url))
-
-for task in as_completed(processes):
-    print(task.result())
+def main():
+    try:
+        filename = sys.argv[1]
+    except IndexError:
+        print("Please provide a filename")
+        exit(1)
+    linecount = get_linecount(filename)
+    with open(filename, "r") as f:
+        for line in track(f, description="Progress:", total=linecount):
+            process(line)
 
 
-print(f'Time taken: {time() - start}')
+if __name__ == "__main__":
+    main()

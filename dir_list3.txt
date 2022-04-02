@@ -127,6 +127,7 @@ F
 FAQ
 G
 Games
+guestbook
 Global
 Graphics
 H
@@ -147,7 +148,7 @@ Legal
 Links
 Linux
 Log
-Login
+login
 Logs
 M
 M_images
@@ -187,6 +188,7 @@ Resources
 S
 Scripts
 Search
+artists
 Security
 Services
 Servlet

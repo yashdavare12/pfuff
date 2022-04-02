@@ -309,6 +309,7 @@ def parse_arguemnts():
 	parser.add_argument("-i", "--ignorecertificate", help="Ignore certificate errors", action="store_true", default=False)
 	parser.add_argument("-u", "--useragent", help="User agent to use.", default=generate_user_agent())
 	parser.add_argument("-mr","--matchs", help="regex match")
+	parser.add_argument("-ex","--fileext", help="file extensions to match")
 	parser.add_argument("-ms","--matchstatus", help="match status and allow only that ones")
 	parser.add_argument("-fs","--filterstatus", help="filter status and allow only that ones")
 	parser.add_argument("--ssl", help="Should i use SSL?", action="store_true")
@@ -520,7 +521,7 @@ def main():
 	
 	#rprint(result)
 	args = parse_arguemnts()
-
+	
 	# Read relevant files
 	# Parse ports file.
 	if args.pfile:
@@ -580,14 +581,27 @@ def main():
 
 	
 	
-	
+	if args.fileext!=None:
+		extlist=(args.fileext).split(',')
 	for port in ports:
 		for dir in dirs:
 			url=args.domain.replace("fuzz", dir)
-			l=[dir,url]
-			URLs_to_check.append(tuple(l))
+			tempurl=url
+			tempdir=dir
+			if args.fileext!=None:
+				for ext in extlist:
+					url=tempurl
+					dir=tempdir
+					url=url+"."+ext
+					dir=dir+"."+ext
+					l=[dir,url]
+					URLs_to_check.append(tuple(l))
+			else:
+				l=[dir,url]
+				URLs_to_check.append(tuple(l))
+	
 			#URLs_to_check.append(url)
-	#print(args.X)
+	#print(URLs_to_check)
 	try:
 		if "fuzz" in args.headers:
 			#print('in headers')
