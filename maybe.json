@@ -1,0 +1,1 @@
+{"req": {"Command": ".\\BirDuster.py  -l  .\\dir_list2.txt  -t  40  https://judge.me/fuzz  "}}

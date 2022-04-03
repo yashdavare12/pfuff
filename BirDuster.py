@@ -94,7 +94,10 @@ def _fetch_get_header(url, headers,unfuzzdata,datas=False, ssl_verify=True, writ
 	dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 	try:
 		if args.X!=None:
-			site_request = requests.post(url,datas, headers=headers, verify=ssl_verify)
+			if args.followredirect != None:
+				site_request = requests.post(url,datas, headers=headers, verify=ssl_verify,allow_redirects=False)
+			else:
+				site_request = requests.post(url,datas, headers=headers, verify=ssl_verify)
 		else:
 			site_request = requests.get(url, headers=headers, verify=ssl_verify)
 		#print('requesr '+site_request.request.body)
@@ -210,7 +213,10 @@ def _fetch_url(url,unfuzzdata,count, headers=None, ssl_verify=True, write_respon
 	now = datetime.now()
 	dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 	try:
-		site_request = requests.get(url, headers=headers, verify=ssl_verify)
+		if args.followredirect != None:
+			site_request = requests.get(url, headers=headers, verify=ssl_verify,allow_redirects=False)
+		else:
+			site_request = requests.get(url, headers=headers, verify=ssl_verify)
 		#print(site_request.content)
 		FOUND.append([dt_string, url, site_request.status_code, len(site_request.content)])
 		try:
@@ -281,8 +287,25 @@ def _fetch_url(url,unfuzzdata,count, headers=None, ssl_verify=True, write_respon
 				pass
 		#print(f"number{count}",end="\r")
 		#sys.stdout.write(f"\r :: Progress: [{count} / {ast.Global.max}]")
-		#sys.stdout.flush()
+		#sys.stdout.flush()'
+		data_dict={}
 		console.print(f"[bold green] :: Progress: [{count} / {ast.Global.max}]",end='\r',style="bold")
+		'''with open('maybe.json','a+') as file:
+			data_dict[count]=dict(FUZZ=url,Status=site_request.status_code,Length=str(len(site_request.content)),Fuzzdata=unfuzzdata)
+			
+			
+			#print(file.read())
+			#print('file is')
+			file_data = json.load(file)
+			#print(file_data)
+			file_data["req"].append(data_dict)
+			# Sets file's current position at offset.
+			# 
+			file.seek(0)
+			# convert back to json.
+			json.dump(file_data, file, indent = 4)
+			#json.dump(data_dict,ast.Global.outfile,ensure_ascii=False)
+			ast.Global.outfile.close()'''
 		#print(f"Progress: [{count} / {ast.Global.max}]",end='\r')
 		return 1
 
@@ -317,6 +340,7 @@ def parse_arguemnts():
 	parser.add_argument("-i", "--ignorecertificate", help="Ignore certificate errors", action="store_true", default=False)
 	parser.add_argument("-u", "--useragent", help="User agent to use.", default=generate_user_agent())
 	parser.add_argument("-mr","--matchs", help="regex match")
+	parser.add_argument("-fred","--followredirect", help="follow ridirect from the response")
 	parser.add_argument("-ex","--fileext", help="file extensions to match")
 	parser.add_argument("-ms","--matchstatus", help="match status and allow only that ones")
 	parser.add_argument("-fs","--filterstatus", help="filter status and allow only that ones")
@@ -526,7 +550,17 @@ def main():
 	show_headers()
 	rprint(u'\u2500' * 50)
 	print("")
-	
+	commandstring = '';
+
+	for arg in sys.argv:
+		if ' ' in arg:
+			commandstring += '"{}"  '.format(arg);
+		else:
+			commandstring+="{}  ".format(arg);
+	ast.Global.outfile = open("maybe.json","a+",encoding="utf-8")
+	#print(json.dumps(dict(req=dict(Command=commandstring))));
+	json.dump(dict(req=dict(Command=commandstring)),ast.Global.outfile,ensure_ascii=False) 
+	#file.close()
 	#rprint(result)
 	args = parse_arguemnts()
 	
