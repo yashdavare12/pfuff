@@ -50,6 +50,7 @@ FOUND = []
 thread_local = local()
 
 
+
 def _print_banner():
 	banner = Fore.RED + "\n######           ######                                    \n" + Style.RESET_ALL
 	banner += Fore.RED + "#     # # #####  #     # #    #  ####  ##### ###### #####  \n" + Style.RESET_ALL
@@ -79,10 +80,10 @@ def get_session() -> Session:
         thread_local.session = requests.Session()
     return thread_local.session
 
-def _fetch_get_header(url, headers,unfuzzdata,datas=False, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
+def _fetch_get_header(url, headers,unfuzzdata,count,datas=False, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	global FOUND
+	console = Console()
 	flag1=False
-	
 	flag2=False
 	flag3=False
 	#print("real headers are"+str(headers))
@@ -93,13 +94,20 @@ def _fetch_get_header(url, headers,unfuzzdata,datas=False, ssl_verify=True, writ
 	now = datetime.now()
 	dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 	try:
+		ispost=False
 		if args.X!=None:
+			ispost=True
+
+		if ispost:
 			if args.followredirect != None:
 				site_request = requests.post(url,datas, headers=headers, verify=ssl_verify,allow_redirects=False)
 			else:
 				site_request = requests.post(url,datas, headers=headers, verify=ssl_verify)
 		else:
-			site_request = requests.get(url, headers=headers, verify=ssl_verify)
+			if args.followredirect != None:
+				site_request = requests.get(url, headers=headers, verify=ssl_verify,allow_redirects=False)
+			else:
+				site_request = requests.get(url, headers=headers, verify=ssl_verify)
 		#print('requesr '+site_request.request.body)
 		FOUND.append([dt_string, url, site_request.status_code, len(site_request.content)])
 		try:
@@ -184,6 +192,14 @@ def _fetch_get_header(url, headers,unfuzzdata,datas=False, ssl_verify=True, writ
 						#print(f'Read {len(site_request.content)} in is and {headers}')
 		except:
 				pass
+		
+		console.print(f"[bold green] :: Progress: [{count} / {ast.Global.max}",end='\r',style="bold")
+		if ispost:
+		#print(ast.Global.outputjson)
+			ast.Global.outputjson['fuzzed'].append(dict(URL=url,TYPE='POST',Status=site_request.status_code,Length=str(len(site_request.content)),Fuzzdata=unfuzzdata))
+		else:
+			ast.Global.outputjson['fuzzed'].append(dict(URL=url,TYPE='GET',Status=site_request.status_code,Length=str(len(site_request.content)),Fuzzdata=unfuzzdata))
+		
 		return 1
 
 		
@@ -194,9 +210,12 @@ def _fetch_get_header(url, headers,unfuzzdata,datas=False, ssl_verify=True, writ
 	except Exception as e:
 		FOUND.append([dt_string, url, "Error: %s" % e, 0])
 	
-	fulldesc=str(url+" ==> "+str(site_request.status_code)+"\n")
-	sys.stdout.write(fulldesc)
-	sys.stdout.flush()
+	
+
+
+		
+
+	
 
 def _fetch_url(url,unfuzzdata,count, headers=None, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	global FOUND
@@ -289,23 +308,16 @@ def _fetch_url(url,unfuzzdata,count, headers=None, ssl_verify=True, write_respon
 		#sys.stdout.write(f"\r :: Progress: [{count} / {ast.Global.max}]")
 		#sys.stdout.flush()'
 		data_dict={}
+		
 		console.print(f"[bold green] :: Progress: [{count} / {ast.Global.max}]",end='\r',style="bold")
-		'''with open('maybe.json','a+') as file:
-			data_dict[count]=dict(FUZZ=url,Status=site_request.status_code,Length=str(len(site_request.content)),Fuzzdata=unfuzzdata)
-			
-			
-			#print(file.read())
-			#print('file is')
-			file_data = json.load(file)
-			#print(file_data)
-			file_data["req"].append(data_dict)
-			# Sets file's current position at offset.
-			# 
-			file.seek(0)
-			# convert back to json.
-			json.dump(file_data, file, indent = 4)
-			#json.dump(data_dict,ast.Global.outfile,ensure_ascii=False)
-			ast.Global.outfile.close()'''
+		#print(ast.Global.outputjson)
+		#dictls={count:url,Status=site_request.status_code,Length=str(len(site_request.content)),Fuzzdata=unfuzzdata}
+		#ast.Global.outputjson['fuzzed'].append()
+		
+		ast.Global.outputjson['fuzzed'].append(dict(URL=url,TYPE='GET',Status=site_request.status_code,Length=str(len(site_request.content)),Fuzzdata=unfuzzdata))
+		#ast.Global.outputjson['fuzzed'].append(dict(count='d'))
+		
+		
 		#print(f"Progress: [{count} / {ast.Global.max}]",end='\r')
 		return 1
 
@@ -318,8 +330,8 @@ def _fetch_url(url,unfuzzdata,count, headers=None, ssl_verify=True, write_respon
 		FOUND.append([dt_string, url, "Error: %s" % e, 0])
 	
 	fulldesc=str(url+" ==> "+str(site_request.status_code)+"\n")
-	sys.stdout.write(fulldesc)
-	sys.stdout.flush()
+	#sys.stdout.write(fulldesc)
+	#sys.stdout.flush()
 	
 	
 	
@@ -433,8 +445,9 @@ def regexprint(argsmatch,response,datas,unfuzzdata):
 			#print("gotiiiiin")
 			pass
 
-def download_file(url,unfuzzdata,datas, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
+def download_file(url,unfuzzdata,datas,count, ssl_verify=True, write_response=False, timeout=DEF_TIMEOUT):
 	args = parse_arguemnts()
+	console = Console()
 	flag1=False
 	flag2=False
 	flag3=False
@@ -506,10 +519,13 @@ def download_file(url,unfuzzdata,datas, ssl_verify=True, write_response=False, t
 						#print('kalis')
 						regexprint(args.matchs,response,datas,unfuzzdata)
 					else:
-						
 						nonregexprint(response,datas,unfuzzdata)
 			except:
 				pass
+		console.print(f"[bold green] :: Progress: [{count} / {ast.Global.max}]",end='\r',style="bold")
+		#print(ast.Global.outputjson['fuzzed'])
+		ast.Global.outputjson['fuzzed'].append(dict(URL=url,TYPE='POST',Status=response.status_code,Length=str(len(response.content)),Fuzzdata=unfuzzdata))
+		
 		return 1
 	except Exception as e:
 		print(e)
@@ -557,11 +573,28 @@ def main():
 			commandstring += '"{}"  '.format(arg);
 		else:
 			commandstring+="{}  ".format(arg);
-	ast.Global.outfile = open("maybe.json","a+",encoding="utf-8")
-	#print(json.dumps(dict(req=dict(Command=commandstring))));
-	json.dump(dict(req=dict(Command=commandstring)),ast.Global.outfile,ensure_ascii=False) 
-	#file.close()
-	#rprint(result)
+	outfile = open("maybe.json","r+")
+	y = {"emp_name":"Nikhil",
+     "email": "nikhil@geeksforgeeks.org",
+     "job_profile": "Full Time"
+    }
+	ast.Global.outputjson=(dict(req=dict(Command=commandstring),fuzzed=[{"none":"none"}]))
+	#print(ast.Global.outputjson)
+	#print(json.dumps(dict(req=dict(Command=commandstring))));s
+	#print(json.dump(dict(req=dict(Command=commandstring),fuzzed=[{"none":"none"}]),outfile,ensure_ascii=False))
+	#fileopen=json.load(outfile)
+	#fileopen['fuzzed']=[]
+	#outfile.close()
+	
+
+	'''with open('maybe.json','r+') as file:
+		file_data = json.load(file)
+		print('it is ')
+		file_data['fuzz']=[3,3,3,3]
+		print(file_data)
+		file.seek(0)
+		json.dump(file_data, file, indent = 4)'''
+
 	args = parse_arguemnts()
 	
 	# Read relevant files
@@ -646,7 +679,7 @@ def main():
 	#print(URLs_to_check)
 	try:
 		if "fuzz" in args.headers:
-			#print('in headers')
+			print('in headers')
 			for port in ports:
 					for dir in dirs:
 						data=args.headers.replace("fuzz", dir)
@@ -661,19 +694,25 @@ def main():
 			processes = []
 			thread_args = []
 			
+			count=0
+
 			if args.X!=None:
 				for i in DATA_to_check:
-					thread_args.append((args.domain,i[1],i[0],args.data,args.ignorecertificate,args.writeresponse, args.timeout))
+					count+=1
+					thread_args.append((args.domain,i[1],i[0],count,args.data,args.ignorecertificate,args.writeresponse, args.timeout))
 			else:
 				for i in DATA_to_check:
-					thread_args.append((args.domain,i[1],i[0],args.ignorecertificate,args.writeresponse, args.timeout))
+					thread_args.append((args.domain,i[1],i[0],count,args.ignorecertificate,args.writeresponse, args.timeout))
+
+			max = thread_args[-1][2]
+			ast.Global.max=max
 
 			with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
 				executor.map(_fetch_get_header, *zip(*thread_args))
 
-			_print_succ("Completed exection on %s items." % len(URLs_to_check))
-			print('exiting')
-			exit()
+			#_print_succ("Completed exection on %s items." % len(URLs_to_check))
+			#print('exiting')
+			
 	except Exception:
 		#traceback.print_exc()
 		pass
@@ -688,7 +727,7 @@ def main():
 		argspresent=True
 	if args.X == "POST" and argspresent:
 		if "fuzz" in args.data:
-			#print("POSt")
+			print("POSt")
 			for port in ports:
 				for dir in dirs:
 					data=args.data.replace("fuzz", dir)
@@ -708,21 +747,24 @@ def main():
 			#	print(i)
 			#NEW_DATA_CHECK= DATA_to_check.items()
 
-
+			count=0
 			for i in DATA_to_check:
-				thread_args.append((args.domain,i[0],i[1],args.ignorecertificate,args.writeresponse, args.timeout))
+				count+=1
+				thread_args.append((args.domain,i[0],i[1],count,args.ignorecertificate,args.writeresponse, args.timeout))
+			
+			max = thread_args[-1][2]
+			ast.Global.max=max
 
 			with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
 				executor.map(download_file, *zip(*thread_args))
 
-			for task in as_completed(processes):
+			'''for task in as_completed(processes):
 				try:
 					print(task.result().status_code)
 				#print('s')
 				except:
-					pass
-			exit()
-	else:
+					pass'''
+	elif argspresent==True:
 		processes = []
 		_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
 		_print_info("Execution starting with %s threads..." % args.threads)
@@ -742,9 +784,17 @@ def main():
 		ast.Global.max=max
 		with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
 			executor.map(_fetch_url, *zip(*thread_args))
-
+	else:
+		pass
 	_print_succ("Completed exection on %s items." % len(URLs_to_check))
-
+	with open('maybe.json', 'r+') as file:
+		
+		(ast.Global.outputjson['fuzzed']).pop(0)
+		
+		json_object = json.dumps(ast.Global.outputjson, indent = 4)
+		#print(json_object)
+		file.write(json_object)
+		
 	# Write output to file
 	'''with open(args.output, 'w', newline='') as csvfile:
 		fieldnames = ['Datetime', 'URL', 'StatusCode', 'ResponseSize']
