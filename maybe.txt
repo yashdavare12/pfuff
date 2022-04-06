@@ -1,1 +1,0 @@
-{"Command": ".\\BirDuster.py  -l  .\\dir_list2.txt  -t  40  -X  POST  http://192.168.43.38/mutillidae/index.php?page=login.php  -H  {'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}  -mr  log  -fs  301  -ms  200  "}
