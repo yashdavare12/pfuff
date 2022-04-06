@@ -15,21 +15,7 @@
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "Extranet"
-        },
-        {
-            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
-            "TYPE": "GET",
-            "Status": 200,
-            "Length": "25384",
-            "Fuzzdata": "English"
-        },
-        {
-            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
-            "TYPE": "GET",
-            "Status": 200,
-            "Length": "25384",
-            "Fuzzdata": "Entertainment"
+            "Fuzzdata": "00000000"
         },
         {
             "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
@@ -43,21 +29,7 @@
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "000000"
-        },
-        {
-            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
-            "TYPE": "GET",
-            "Status": 200,
-            "Length": "25384",
             "Fuzzdata": "Downloads"
-        },
-        {
-            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
-            "TYPE": "GET",
-            "Status": 200,
-            "Length": "25384",
-            "Fuzzdata": "E"
         },
         {
             "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
@@ -78,28 +50,14 @@
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "00000000"
+            "Fuzzdata": "Entertainment"
         },
         {
             "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "FAQ"
-        },
-        {
-            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
-            "TYPE": "GET",
-            "Status": 200,
-            "Length": "25384",
-            "Fuzzdata": "Global"
-        },
-        {
-            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
-            "TYPE": "GET",
-            "Status": 200,
-            "Length": "25384",
-            "Fuzzdata": "Graphics"
+            "Fuzzdata": "English"
         },
         {
             "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
@@ -113,7 +71,28 @@
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "F"
+            "Fuzzdata": "000000"
+        },
+        {
+            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
+            "TYPE": "GET",
+            "Status": 200,
+            "Length": "25384",
+            "Fuzzdata": "E"
+        },
+        {
+            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
+            "TYPE": "GET",
+            "Status": 200,
+            "Length": "25384",
+            "Fuzzdata": "G"
+        },
+        {
+            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
+            "TYPE": "GET",
+            "Status": 200,
+            "Length": "25384",
+            "Fuzzdata": "Extranet"
         },
         {
             "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
@@ -127,7 +106,14 @@
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "G"
+            "Fuzzdata": "Health"
+        },
+        {
+            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
+            "TYPE": "GET",
+            "Status": 200,
+            "Length": "25384",
+            "Fuzzdata": "FAQ"
         },
         {
             "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
@@ -148,20 +134,6 @@
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "Health"
-        },
-        {
-            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
-            "TYPE": "GET",
-            "Status": 200,
-            "Length": "25384",
-            "Fuzzdata": "Help"
-        },
-        {
-            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
-            "TYPE": "GET",
-            "Status": 200,
-            "Length": "25384",
             "Fuzzdata": "HTML"
         },
         {
@@ -169,35 +141,35 @@
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "Java"
+            "Fuzzdata": "Graphics"
         },
         {
             "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "Internet"
+            "Fuzzdata": "Global"
         },
         {
             "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "Home"
+            "Fuzzdata": "F"
         },
         {
             "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "L"
+            "Fuzzdata": "I"
         },
         {
             "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "J"
+            "Fuzzdata": "Help"
         },
         {
             "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
@@ -218,13 +190,6 @@
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "Index"
-        },
-        {
-            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
-            "TYPE": "GET",
-            "Status": 200,
-            "Length": "25384",
             "Fuzzdata": "Images"
         },
         {
@@ -232,14 +197,35 @@
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "I"
+            "Fuzzdata": "Internet"
         },
         {
             "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "Linux"
+            "Fuzzdata": "Index"
+        },
+        {
+            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
+            "TYPE": "GET",
+            "Status": 200,
+            "Length": "25384",
+            "Fuzzdata": "L"
+        },
+        {
+            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
+            "TYPE": "GET",
+            "Status": 200,
+            "Length": "25384",
+            "Fuzzdata": "Legal"
+        },
+        {
+            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
+            "TYPE": "GET",
+            "Status": 200,
+            "Length": "25384",
+            "Fuzzdata": "Home"
         },
         {
             "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
@@ -253,7 +239,21 @@
             "TYPE": "GET",
             "Status": 200,
             "Length": "25384",
-            "Fuzzdata": "Legal"
+            "Fuzzdata": "Java"
+        },
+        {
+            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
+            "TYPE": "GET",
+            "Status": 200,
+            "Length": "25384",
+            "Fuzzdata": "Linux"
+        },
+        {
+            "URL": "http://192.168.43.38/mutillidae/index.php?page=login.php",
+            "TYPE": "GET",
+            "Status": 200,
+            "Length": "25384",
+            "Fuzzdata": "J"
         }
     ]
 }

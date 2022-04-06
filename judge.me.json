@@ -1,0 +1,259 @@
+{
+    "req": {
+        "Command": ".\\BirDuster.py  -l  .\\dir_list2.txt  -t  40  https://judge.me/fuzz  "
+    },
+    "fuzzed": [
+        {
+            "URL": "https://judge.me/English",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "English"
+        },
+        {
+            "URL": "https://judge.me/Global",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Global"
+        },
+        {
+            "URL": "https://judge.me/E",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "E"
+        },
+        {
+            "URL": "https://judge.me/000000",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "000000"
+        },
+        {
+            "URL": "https://judge.me/Games",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Games"
+        },
+        {
+            "URL": "https://judge.me/Linux",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Linux"
+        },
+        {
+            "URL": "https://judge.me/INSTALL_admin",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "INSTALL_admin"
+        },
+        {
+            "URL": "https://judge.me/00000000",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "00000000"
+        },
+        {
+            "URL": "https://judge.me/Legal",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Legal"
+        },
+        {
+            "URL": "https://judge.me/G",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "G"
+        },
+        {
+            "URL": "https://judge.me/Help",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Help"
+        },
+        {
+            "URL": "https://judge.me/FAQ",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "FAQ"
+        },
+        {
+            "URL": "https://judge.me/HTML",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "HTML"
+        },
+        {
+            "URL": "https://judge.me/Internet",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Internet"
+        },
+        {
+            "URL": "https://judge.me/F",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "F"
+        },
+        {
+            "URL": "https://judge.me/Links",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Links"
+        },
+        {
+            "URL": "https://judge.me/0",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "0"
+        },
+        {
+            "URL": "https://judge.me/J",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "J"
+        },
+        {
+            "URL": "https://judge.me/I",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "I"
+        },
+        {
+            "URL": "https://judge.me/Extranet",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Extranet"
+        },
+        {
+            "URL": "https://judge.me/Education",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Education"
+        },
+        {
+            "URL": "https://judge.me/guestbook",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "guestbook"
+        },
+        {
+            "URL": "https://judge.me/Events",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Events"
+        },
+        {
+            "URL": "https://judge.me/0000",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "0000"
+        },
+        {
+            "URL": "https://judge.me/Java",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Java"
+        },
+        {
+            "URL": "https://judge.me/Home",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Home"
+        },
+        {
+            "URL": "https://judge.me/H",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "H"
+        },
+        {
+            "URL": "https://judge.me/Health",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Health"
+        },
+        {
+            "URL": "https://judge.me/Downloads",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Downloads"
+        },
+        {
+            "URL": "https://judge.me/Images",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Images"
+        },
+        {
+            "URL": "https://judge.me/Image",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Image"
+        },
+        {
+            "URL": "https://judge.me/Entertainment",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Entertainment"
+        },
+        {
+            "URL": "https://judge.me/L",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "L"
+        },
+        {
+            "URL": "https://judge.me/Graphics",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Graphics"
+        },
+        {
+            "URL": "https://judge.me/00",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "00"
+        },
+        {
+            "URL": "https://judge.me/Index",
+            "TYPE": "GET",
+            "Status": 404,
+            "Length": "16544",
+            "Fuzzdata": "Index"
+        }
+    ]
+}
