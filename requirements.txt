@@ -1,2 +1,8 @@
 user_agent
 colorama
+requests
+json
+rich
+pyfiglet
+socket
+argparse
