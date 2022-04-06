@@ -26,8 +26,8 @@ flag):
 * `-d`/`--data`: POST data to be send in request.
 * `-H`/`--headers`: Headers to be send in request.
 * `-X`/`--X`: Specify which request to use POST
-* `-fred`/`--followredirect`: Set this to True to follow ridirect from the response
-* `-ex`/`--fileext`: file extensions to match eg: php,html,js (should be seperated be ,)
+* `-fred`/`--followredirect`: Set this to `True` to follow ridirect from the response
+* `-ex`/`--fileext`: file extensions to match `eg: php,html,js` (should be seperated be ,)
 * `--timeout`: Change default socket timeout. Default is 3 seconds.
 
 ```bash
