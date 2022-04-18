@@ -29,7 +29,7 @@ flag):
 * `--ssl`: Use SSL or not. `-i` flag will automatically turn on SSL.
 * `-i`/`--ignorecertificate`: Ignore SSL certificate errors. Default is TRUE.
 * `-ex`/`--fileext`: file extensions to match `eg: php,html,js` (should be seperated be ,)
-* `--timeout`: Change default socket timeout. Default is 3 seconds.
+
 
 ```bash
 usage: pfuff.py [-h] [-v] [-t THREADS] [-t THREADS]
