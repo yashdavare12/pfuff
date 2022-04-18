@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 
 import os
-import csv
 import sys
-import base64
 import pyfiglet
-import time
 from urllib import request
 from rich.table import Table
 from rich.console import Console
@@ -13,18 +10,13 @@ from rich.columns import Columns
 from rich import segment
 from rich import print as rprint
 import socket
-import traceback
-import pycurl
 from urllib.parse import urlencode
 import random
 import argparse
-import colorama
 import requests
-import asyncio
 import re
 import json
 from requests.sessions import Session
-import aiohttp
 import threading
 import concurrent
 from concurrent.futures import ThreadPoolExecutor, as_completed
