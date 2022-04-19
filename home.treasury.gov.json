@@ -1,0 +1,6 @@
+{
+    "req": {
+        "Command": ".\\pfuff.py  -l  .\\dir_list2.txt  -t  40  https://home.treasury.gov/FUZZ  "
+    },
+    "fuzzed": []
+}
