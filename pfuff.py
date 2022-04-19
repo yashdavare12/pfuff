@@ -55,7 +55,7 @@ def get_session() -> Session:
         thread_local.session = requests.Session()
     return thread_local.session
 
-def _fetch_get_header(url, headers,unfuzzdata,count,datas=False, ssl_verify=True, timeout=DEF_TIMEOUT):
+def _fetch_header(url, headers,unfuzzdata,count,datas=False, ssl_verify=True, timeout=DEF_TIMEOUT):
 	global FOUND
 	console = Console()
 	flag1=False
@@ -73,9 +73,9 @@ def _fetch_get_header(url, headers,unfuzzdata,count,datas=False, ssl_verify=True
 			ispost=True
 		if ispost:
 			if args.followredirect != None:
-				site_request = requests.post(url,datas, headers=headers, verify=ssl_verify,allow_redirects=False)
+				site_request = requests.post(url,datas, headers=headers, verify=ssl_verify,allow_redirects=False,timeout=timeout)
 			else:
-				site_request = requests.post(url,datas, headers=headers, verify=ssl_verify)
+				site_request = requests.post(url,datas, headers=headers, verify=ssl_verify,timeout=timeout)
 		else:
 			if args.followredirect != None:
 				site_request = requests.get(url, headers=headers, verify=ssl_verify,allow_redirects=False)
@@ -155,6 +155,7 @@ def _fetch_url(url,unfuzzdata,count, headers=None, ssl_verify=True, timeout=DEF_
 	flag1=False
 	flag2=False
 	flag3=False
+	#print(port)
 	args = parse_arguemnts()
 	domain = url.split("//")[-1].split("/")[0].split('?')[0].split(':')[0]
 	socket.setdefaulttimeout = timeout
@@ -162,9 +163,9 @@ def _fetch_url(url,unfuzzdata,count, headers=None, ssl_verify=True, timeout=DEF_
 	dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 	try:
 		if args.followredirect != None:
-			site_request = requests.get(url, headers=headers, verify=ssl_verify,allow_redirects=False)
+			site_request = requests.get(url, headers=headers, verify=ssl_verify,allow_redirects=False,timeout=timeout)
 		else:
-			site_request = requests.get(url, headers=headers, verify=ssl_verify)
+			site_request = requests.get(url, headers=headers, verify=ssl_verify,timeout=timeout)
 		FOUND.append([dt_string, url, site_request.status_code, len(site_request.content)])
 		try:
 			if args.matchs and (args.matchstatus or args.filterstatus):
@@ -248,7 +249,7 @@ def parse_arguemnts():
 	parser.add_argument("-ms","--matchstatus", help="match status and allow only that ones")
 	parser.add_argument("-fs","--filterstatus", help="filter status and allow only that ones")
 	parser.add_argument("--ssl", help="Should i use SSL?", action="store_true")
-	parser.add_argument('--timeout', help="Socket timeout [3]", default=3, type=int)
+	parser.add_argument('--timeout', help="Socket timeout [3]", default=3, type=float)
 	args = parser.parse_args()
 	if args.dlist:
 		if not os.path.exists(args.dlist):
@@ -460,7 +461,7 @@ def main():
 		extlist=(args.fileext).split(',')
 	for port in ports:
 		for dir in dirs:
-			url=args.domain.replace("fuzz", dir)
+			url=args.domain.replace("FUZZ", dir)
 			tempurl=url
 			tempdir=dir
 			if args.fileext!=None:
@@ -475,11 +476,11 @@ def main():
 				l=[dir,url]
 				URLs_to_check.append(tuple(l))
 	try:
-		if "fuzz" in args.headers:
+		if "FUZZ" in args.headers:
 			print('in headers')
 			for port in ports:
 					for dir in dirs:
-						data=args.headers.replace("fuzz", dir)
+						data=args.headers.replace("FUZZ", dir)
 						l=[dir,ast.literal_eval(data)]
 						DATA_to_check.append(tuple(l))
 			_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
@@ -499,23 +500,23 @@ def main():
 			max = thread_args[-1][2]
 			ast.Global.max=max
 			with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
-				executor.map(_fetch_get_header, *zip(*thread_args))
+				executor.map(_fetch_header, *zip(*thread_args))
 	except Exception:
 		pass
 	argspresent=True
 	try:
-		if "fuzz" not in args.headers:
+		if "FUZZ" not in args.headers:
 			argspresent=True
 		else:
 			argspresent=False
 	except:
 		argspresent=True
 	if args.X == "POST" and argspresent:
-		if "fuzz" in args.data:
+		if "FUZZ" in args.data:
 			print("POSt")
 			for port in ports:
 				for dir in dirs:
-					data=args.data.replace("fuzz", dir)
+					data=args.data.replace("FUZZ", dir)
 					l=[dir,ast.literal_eval(data)]
 					DATA_to_check.append(tuple(l))
 			_print_info("Starting execution on %s URLs of %s ports and %s directories." % (len(URLs_to_check), len(ports), len(dirs)))
