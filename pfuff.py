@@ -525,12 +525,11 @@ def main():
 			console.print(f"[violet]{str('Size'): <{20}}{str('Payload'): <{23}}{str('Status Code'): >{20}}[/]" ,style="bold violet")
 			processes = []
 			thread_args = []
-			tokens = {'Token': '326729'}
 			count=0
 			for i in DATA_to_check:
 				count+=1
 				thread_args.append((args.domain,i[0],i[1],count,args.ignorecertificate, args.timeout))
-			max = thread_args[-1][2]
+			max = thread_args[-1][3]
 			ast.Global.max=max
 			with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
 				executor.map(_do_post, *zip(*thread_args))
