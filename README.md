@@ -45,6 +45,8 @@ GET request:
      python .\pfuff.py -l .\dir_list2.txt -t 10 http://192.168.43.38/mutillidae/index.php?page=fuzz -mr "logged"        
 POST request:
      python .\pfuff.py -l .\dir_list2.txt -t 40 -X POST http://192.168.43.38/mutillidae/index.php?page=login.php -d "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}" -mr "logged"
+more POST:
+      python .\pfuff.py -l .\dir_list2.txt -t 10 -X POST  https://hack-yourself-first.com/Account/Login -d "{'Email':'sahilkb@gmail.com','Password':'FUZZ','RememberMe':'false'}"
 GET Headers:
      python .\pfuff.py -l .\dir_list2.txt -t 40 http://192.168.43.38/mutillidae/index.php?page=login.php -H "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}" -ms 200 -fs 401 -mr "Logged"
 POST Header:
