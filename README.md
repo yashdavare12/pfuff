@@ -16,24 +16,24 @@
 flag):
 
 * `-h`/`--help`: Show help and exit.
-* `-p`/`--port`: Port to use while dirbusting. Default 80/443.
-* `-P`/`--pfile`: If you want to test several ports just write them to a file with newlines.
 * `-t`/`--threads`: Amount of concurrent threads. Default is 15.
-* `-o`/`--output`: Output CSV of responses. Default is `domain_output.csv`.
 * `-l`/`--dlist`: Directory list file. Default is `dir_list.txt`.
 * `-w`/`--writereponse`: Will write HTTP/S responses to files. Default is False.
 * `-mr`/`--matchs`: Regex match in reponse.
+* `-ms`/`--matchstatus`: Match status and allow only that ones.
+* `-fs`/`--filterstatus`: Filter status by blocking that ones.
 * `-d`/`--data`: POST data to be send in request.
 * `-H`/`--headers`: Headers to be send in request.
 * `-X`/`--X`: Specify which request to use POST
 * `-fred`/`--followredirect`: Set this to `True` to follow ridirect from the response
+* `--ssl`: Use SSL or not. `-i` flag will automatically turn on SSL.
+* `-i`/`--ignorecertificate`: Ignore SSL certificate errors. Default is TRUE.
 * `-ex`/`--fileext`: file extensions to match `eg: php,html,js` (should be seperated be ,)
-* `--timeout`: Change default socket timeout. Default is 3 seconds.
+
 
 ```bash
-usage: dirbus.py [-h] [-v] [-p PORT] [-P PFILE] [-t THREADS] [-o OUTPUT]
-                 [-l DLIST] [-w] [-i] [-u USERAGENT] [--ssl]
-                 [--timeout TIMEOUT]
+usage: pfuff.py [-h] [-v] [-t THREADS] [-t THREADS]
+                 [-l DLIST] [-w] [-i] 
                  domain
 
 positional arguments:
@@ -42,11 +42,13 @@ positional arguments:
 ```bash
 Example:
 GET request:
-     python .\BirDuster.py -l .\dir_list2.txt -t 10 http://192.168.43.38/mutillidae/index.php?page=fuzz -mr "logged"        
+     python .\pfuff.py -l .\dir_list2.txt -t 10 http://192.168.43.38/mutillidae/index.php?page=fuzz -mr "logged"        
 POST request:
-     python .\BirDuster.py -l .\dir_list2.txt -t 40 -X POST http://192.168.43.38/mutillidae/index.php?page=login.php -d "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}" -mr "logged"
+     python .\pfuff.py -l .\dir_list2.txt -t 40 -X POST http://192.168.43.38/mutillidae/index.php?page=login.php -d "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}" -mr "logged"
+more POST:
+      python .\pfuff.py -l .\dir_list2.txt -t 10 -X POST  https://hack-yourself-first.com/Account/Login -d "{'Email':'sahilkb@gmail.com','Password':'FUZZ','RememberMe':'false'}"
 GET Headers:
-     python .\BirDuster.py -l .\dir_list2.txt -t 40 http://192.168.43.38/mutillidae/index.php?page=login.php -H "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}" -ms 200 -fs 401 -mr "Logged"
+     python .\pfuff.py -l .\dir_list2.txt -t 40 http://192.168.43.38/mutillidae/index.php?page=login.php -H "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}" -ms 200 -fs 401 -mr "Logged"
 POST Header:
-     python .\BirDuster.py -l .\dir_list2.txt -t 40 -X POST http://192.168.43.38/mutillidae/index.php?page=login.php -H "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}" -ms 200 -fs 401 -mr "Logged"
+     python .\pfuff.py -l .\dir_list2.txt -t 40 -X POST http://192.168.43.38/mutillidae/index.php?page=login.php -H "{'username':'sdsd','password':'fuzz','login-php-submit-button':'Login'}" -ms 200 -fs 401 -mr "Logged"
 ```
